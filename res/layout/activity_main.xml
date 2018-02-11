@@ -1,0 +1,103 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white" >
+
+    <FrameLayout
+        android:id="@+id/diary_flyt_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/diary_bg_tab"
+        android:baselineAligned="false"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/diary_llyt_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/diary_iv_info"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/diary_info_selector" />
+
+            <TextView
+                android:id="@+id/diary_tv_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/diary_str_info"
+                android:textColor="@color/diary_cl_unchoose"
+                android:textSize="@dimen/t4" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/diary_llyt_focus"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/diary_iv_focus"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/diary_focus_selector" />
+
+            <TextView
+                android:id="@+id/diary_tv_focus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/diary_str_focus"
+                android:textColor="@color/diary_cl_unchoose"
+                android:textSize="@dimen/t4" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/diary_llyt_self"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/diary_iv_self"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/diary_self_selector" />
+
+            <TextView
+                android:id="@+id/diary_tv_self"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/diary_str_self"
+                android:textColor="@color/diary_cl_unchoose"
+                android:textSize="@dimen/t4" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

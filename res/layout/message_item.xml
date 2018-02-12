@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/msg_iv_img"
+        android:layout_width="105dp"
+        android:layout_height="70dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/empty_photo" />
+
+    <TextView
+        android:id="@+id/msg_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/msg_iv_img"
+        android:text="留言..."
+        android:textColor="#313131"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/msg_tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/item_tv_title"
+        android:layout_alignParentBottom="true"
+        android:text="2018-01-01"
+        android:textColor="#909090"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/msg_tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="User"
+        android:textColor="#909090"
+        android:textSize="14sp" />
+</RelativeLayout>

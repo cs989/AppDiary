@@ -15,5 +15,8 @@
     <string name="find_str_focused">已关注</string>
     <string name="find_str_all">全部</string>
     <string name="find_str_add">+</string>
+    <!-- info add-->
+    <string name="info_add_str_add">请编写病人相关情况。。。</string>
+    <string name="msg_add_str_add">留言。。。</string>
 
 </resources>

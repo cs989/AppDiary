@@ -7,14 +7,13 @@
     <!-- 顶部保存和返回按钮 -->
 
     <LinearLayout
-        android:id="@+id/Ly_top"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#FF6000"
         android:orientation="horizontal" >
 
         <ImageView
-            android:id="@+id/iv_back"
+            android:id="@+id/info_add_iv_back"
             android:layout_width="36dp"
             android:layout_height="40dp"
             android:layout_marginLeft="10dp"
@@ -29,39 +28,48 @@
             android:orientation="horizontal" >
 
             <ImageView
-                android:id="@+id/iv_save"
+                android:id="@+id/info_add_iv_save"
                 android:layout_width="36dp"
                 android:layout_height="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_back" />
+                android:src="@drawable/ic_save" />
         </LinearLayout>
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/info_add_et_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="标题"
+        android:maxLength="500"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <EditText
-            android:id="@+id/editText1"
+            android:id="@+id/info_add_et_context"
             android:layout_width="fill_parent"
             android:layout_height="150dp"
-            android:layout_margin="5dp"
-            android:hint="随手说出你此刻的心声..."
+            android:layout_=""
+            android:hint="@string/info_add_str_add"
             android:maxLength="500"
             android:singleLine="false"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:textSize="15sp" />
         <!-- 网格显示图片 行列间距5dp 每列宽度90dp -->
 
         <GridView
-            android:id="@+id/gridView1"
+            android:id="@+id/info_add_gv_images"
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:layout_margin="10dp"
             android:background="#EFDFDF"
             android:columnWidth="90dp"
@@ -76,7 +84,41 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="(友情提示:只能添加9张图片,长按图片可以删除已添加图片)" />
+            android:text="(友情提示:只能添加8张图片,长按图片可以删除已添加图片)"
+            android:textSize="10sp" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/msg_add_et_context"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:hint="@string/msg_add_str_add"
+            android:maxLength="100"
+            android:singleLine="false"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/msg_post_bt_context"
+            android:layout_width="odp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="留言" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/msg_item_lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@drawable/listview_item_bg"
+        android:overScrollMode="never"
+        android:visibility="gone" >
+    </ListView>
 
 </LinearLayout>

@@ -3,13 +3,13 @@ package com.hispital.appdiary.activity;
 import android.content.Context;
 import android.content.Intent;
 
-public class UpdateInfo extends BaseActivity {
+public class UpdateInfoActivity extends BaseActivity {
 
 	
 	
 	// 静态方法启动activity
 	public static void startActivity(Context context) {
-		Intent intent = new Intent(context, UpdateInfo.class);
+		Intent intent = new Intent(context, UpdateInfoActivity.class);
 		context.startActivity(intent);
 	}
 

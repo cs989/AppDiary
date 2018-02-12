@@ -58,7 +58,6 @@
             android:id="@+id/info_add_et_context"
             android:layout_width="fill_parent"
             android:layout_height="150dp"
-            android:layout_=""
             android:hint="@string/info_add_str_add"
             android:maxLength="500"
             android:singleLine="false"
@@ -106,7 +105,7 @@
 
         <Button
             android:id="@+id/msg_post_bt_context"
-            android:layout_width="odp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="留言" />

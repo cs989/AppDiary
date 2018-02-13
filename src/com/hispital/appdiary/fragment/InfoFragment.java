@@ -1,21 +1,14 @@
 package com.hispital.appdiary.fragment;
 
-import java.io.File;
 import java.util.List;
 
 import com.hispital.appdiary.R;
-import com.hispital.appdiary.application.LocalApplication;
-import com.hispital.appdiary.util.ConstantsUtil;
+import com.hispital.appdiary.activity.UpdateInfoActivity;
 import com.hispital.appdiary.util.JListKit;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-import android.os.Handler;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -49,6 +42,8 @@ public class InfoFragment extends BaseFragment {
 	// viewpager
 	@ViewInject(R.id.info_vp)
 	ViewPager info_vp;
+	
+	private UpdateInfoActivity updateInfoActivity;
 
 	private List<Fragment> fragmentList = JListKit.newArrayList();
 
@@ -115,34 +110,35 @@ public class InfoFragment extends BaseFragment {
 
 	// 新建记录
 	private void addDiary() {
-		String path = "C:/Users/Public/Pictures/Sample Pictures/1.jpg";
-		RequestParams params = new RequestParams();
-		params.addBodyParameter("file", new File(path));
-		final Handler handler = new Handler();
-
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "login", params, new RequestCallBack<String>()
-		{
-
-			@Override
-			public void onFailure(HttpException arg0, String arg1)
-			{
-				// 回送消息
-				handler.sendEmptyMessage(-1);
-			}
-
-			@Override
-			public void onLoading(long total, long current, boolean isUploading)
-			{
-				super.onLoading(total, current, isUploading);
-			}
-
-			@Override
-			public void onSuccess(ResponseInfo<String> arg0)
-			{
-				// 回送消息
-				handler.sendEmptyMessage(1);
-			}
-		});
+		UpdateInfoActivity.startActivity(context);
+//		String path = "C:/Users/Public/Pictures/Sample Pictures/1.jpg";
+//		RequestParams params = new RequestParams();
+//		params.addBodyParameter("file", new File(path));
+//		final Handler handler = new Handler();
+//
+//		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "login", params, new RequestCallBack<String>()
+//		{
+//
+//			@Override
+//			public void onFailure(HttpException arg0, String arg1)
+//			{
+//				// 回送消息
+//				handler.sendEmptyMessage(-1);
+//			}
+//
+//			@Override
+//			public void onLoading(long total, long current, boolean isUploading)
+//			{
+//				super.onLoading(total, current, isUploading);
+//			}
+//
+//			@Override
+//			public void onSuccess(ResponseInfo<String> arg0)
+//			{
+//				// 回送消息
+//				handler.sendEmptyMessage(1);
+//			}
+//		});
 	}
 
 	// viewpager视图切换监听器

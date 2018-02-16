@@ -11,6 +11,7 @@ import com.lidroid.xutils.view.annotation.event.OnClick;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
@@ -38,10 +39,14 @@ public class InfoFragment extends BaseFragment {
 	// 新增记录
 	@ViewInject(R.id.fragment_find_info_btn_add)
 	Button fragment_find_info_btn_add;
+	
+	
+	// fragment事务
+	private FragmentTransaction ft;
 
-	// viewpager
-	@ViewInject(R.id.info_vp)
-	ViewPager info_vp;
+//	// viewpager
+//	@ViewInject(R.id.info_vp)
+//	ViewPager info_vp;
 	
 	private UpdateInfoActivity updateInfoActivity;
 
@@ -61,52 +66,96 @@ public class InfoFragment extends BaseFragment {
 
 	@Override
 	protected void initParams() {
-		findFocusedFragment = new FindFocusedFragment();
-		findAllFragment = new FindAllFragment();
-		fragmentList.add(findFocusedFragment);
-		fragmentList.add(findAllFragment);
-
-		info_vp.setAdapter(new FragmentStatePagerAdapter(getChildFragmentManager()) {
-
-			@Override
-			public int getCount() {
-				return fragmentList.size();
-			}
-
-			@Override
-			public Fragment getItem(int arg0) {
-				return fragmentList.get(arg0);
-			}
-		});
-
-		info_vp.setCurrentItem(0);
-		info_vp.setOnPageChangeListener(new DefineOnPageChangeListener());
+		viewOnClick(fragment_find_tv_focused);
+//		findFocusedFragment = new FindFocusedFragment();
+//		findAllFragment = new FindAllFragment();
+//		fragmentList.add(findFocusedFragment);
+//		fragmentList.add(findAllFragment);
+//
+//		info_vp.setAdapter(new FragmentStatePagerAdapter(getChildFragmentManager()) {
+//
+//			@Override
+//			public int getCount() {
+//				return fragmentList.size();
+//			}
+//
+//			@Override
+//			public Fragment getItem(int arg0) {
+//				return fragmentList.get(arg0);
+//			}
+//		});
+//
+//		info_vp.setCurrentItem(0);
+//		info_vp.setOnPageChangeListener(new DefineOnPageChangeListener());
 	}
+	
+	
+	@OnClick({ R.id.fragment_find_tv_focused, R.id.fragment_find_tv_all ,R.id.fragment_find_info_btn_add })
+	public void viewOnClick(View view)
+	{
+		ft = getChildFragmentManager().beginTransaction();
 
-	// 控件点击事件
-	@SuppressWarnings("deprecation")
-	@OnClick({ R.id.fragment_find_tv_focused, R.id.fragment_find_tv_all, R.id.fragment_find_info_btn_add })
-	public void viewOnClick(View view) {
 		switch (view.getId()) {
+		// 已关注
 		case R.id.fragment_find_tv_focused:
 
-			info_vp.setCurrentItem(0);
+			fragment_find_llyt_switch.setBackgroundResource(R.drawable.fragment_find_ic_left);
+			fragment_find_tv_focused.setTextColor(getResources().getColor(R.color.find_cl_choose));
+			fragment_find_tv_all.setTextColor(getResources().getColor(R.color.find_cl_unchoose));
+			if (findFocusedFragment == null)
+			{
+				findFocusedFragment = new FindFocusedFragment();
+			}
+			ft.replace(R.id.fragment_info_flyt_content, findFocusedFragment);
 
 			break;
+		// 全部
 		case R.id.fragment_find_tv_all:
 
-			info_vp.setCurrentItem(1);
+			fragment_find_llyt_switch.setBackgroundResource(R.drawable.fragment_find_ic_right);
+			fragment_find_tv_all.setTextColor(getResources().getColor(R.color.find_cl_choose));
+			fragment_find_tv_focused.setTextColor(getResources().getColor(R.color.find_cl_unchoose));
+
+			if (findAllFragment == null)
+			{
+				findAllFragment = new FindAllFragment();
+			}
+			ft.replace(R.id.fragment_info_flyt_content, findAllFragment);
 
 			break;
 		case R.id.fragment_find_info_btn_add:
-
 			addDiary();
-
 			break;
 		default:
 			break;
 		}
+		ft.commit();
 	}
+
+//	// 控件点击事件
+//	@SuppressWarnings("deprecation")
+//	@OnClick({ R.id.fragment_find_tv_focused, R.id.fragment_find_tv_all, R.id.fragment_find_info_btn_add })
+//	public void viewOnClick(View view) {
+//		switch (view.getId()) {
+//		case R.id.fragment_find_tv_focused:
+//
+//			info_vp.setCurrentItem(0);
+//
+//			break;
+//		case R.id.fragment_find_tv_all:
+//
+//			info_vp.setCurrentItem(1);
+//
+//			break;
+//		case R.id.fragment_find_info_btn_add:
+//
+//			addDiary();
+//
+//			break;
+//		default:
+//			break;
+//		}
+//	}
 
 	// 新建记录
 	private void addDiary() {
@@ -142,33 +191,33 @@ public class InfoFragment extends BaseFragment {
 	}
 
 	// viewpager视图切换监听器
-	public class DefineOnPageChangeListener implements OnPageChangeListener {
-		@Override
-		public void onPageScrollStateChanged(int arg0) {
-		}
-
-		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
-		}
-
-		@Override
-		public void onPageSelected(int arg0) {
-			switch (arg0) {
-			// 要闻
-			case 0:
-				fragment_find_llyt_switch.setBackgroundResource(R.drawable.fragment_find_ic_left);
-				fragment_find_tv_focused.setTextColor(getResources().getColor(R.color.find_cl_choose));
-				fragment_find_tv_all.setTextColor(getResources().getColor(R.color.find_cl_unchoose));
-				break;
-			// 新车
-			case 1:
-
-				fragment_find_llyt_switch.setBackgroundResource(R.drawable.fragment_find_ic_right);
-				fragment_find_tv_all.setTextColor(getResources().getColor(R.color.find_cl_choose));
-				fragment_find_tv_focused.setTextColor(getResources().getColor(R.color.find_cl_unchoose));
-
-				break;
-			}
-		}
-	}
+//	public class DefineOnPageChangeListener implements OnPageChangeListener {
+//		@Override
+//		public void onPageScrollStateChanged(int arg0) {
+//		}
+//
+//		@Override
+//		public void onPageScrolled(int arg0, float arg1, int arg2) {
+//		}
+//
+//		@Override
+//		public void onPageSelected(int arg0) {
+//			switch (arg0) {
+//			// 要闻
+//			case 0:
+//				fragment_find_llyt_switch.setBackgroundResource(R.drawable.fragment_find_ic_left);
+//				fragment_find_tv_focused.setTextColor(getResources().getColor(R.color.find_cl_choose));
+//				fragment_find_tv_all.setTextColor(getResources().getColor(R.color.find_cl_unchoose));
+//				break;
+//			// 新车
+//			case 1:
+//
+//				fragment_find_llyt_switch.setBackgroundResource(R.drawable.fragment_find_ic_right);
+//				fragment_find_tv_all.setTextColor(getResources().getColor(R.color.find_cl_choose));
+//				fragment_find_tv_focused.setTextColor(getResources().getColor(R.color.find_cl_unchoose));
+//
+//				break;
+//			}
+//		}
+//	}
 }

@@ -11,6 +11,7 @@ import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
 import com.hispital.appdiary.util.JListKit;
 import com.hispital.appdiary.view.ProgressWheel;
+import com.hispital.appdiary.view.SlideListView;
 import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -23,9 +24,8 @@ import com.lidroid.xutils.view.annotation.event.OnScrollStateChanged;
 
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
@@ -38,7 +38,7 @@ public class FindAllFragment extends BaseFragment {
 	@ViewInject(R.id.pw)
 	ProgressWheel pw;
 	@ViewInject(R.id.info_diary_lv)
-	ListView info_diary_lv;
+	SlideListView info_diary_lv;
 
 	// 数据源
 	private List<InfoItem> datas = JListKit.newArrayList();
@@ -82,9 +82,21 @@ public class FindAllFragment extends BaseFragment {
 		// 绑定适配器
 		info_diary_lv.setAdapter(adapter);
 
-		initPtr();
+		// initPtr();
+
+		for (int i = 0; i < 20; i++) {
+			InfoItem item = new InfoItem();
+			item.id = i;
+			item.title = "这是第" + i + "个标题";
+			datas.add(item);
+		}
+
+		pw.stopSpinning();
+		pw.setVisibility(View.GONE);
+		info_diary_lv.setVisibility(View.VISIBLE);
+		adapter.refreshDatas(datas);
 		// 加载数据
-		loadListData();
+		// loadListData();
 	}
 
 	// 初始化下拉刷新
@@ -124,8 +136,8 @@ public class FindAllFragment extends BaseFragment {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("pageIndex", pageIndex + "");
 		params.addBodyParameter("pageSize", pageSize + "");
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "login",
-				params, new RequestCallBack<String>() {
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "login", params,
+				new RequestCallBack<String>() {
 
 					@Override
 					public void onFailure(HttpException arg0, String arg1) {

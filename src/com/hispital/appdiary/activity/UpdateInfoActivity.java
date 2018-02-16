@@ -1,7 +1,9 @@
 package com.hispital.appdiary.activity;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import com.hispital.appdiary.R;
@@ -197,9 +199,23 @@ public class UpdateInfoActivity extends BaseActivity {
 						e.printStackTrace();
 					}
 					imageUri = Uri.fromFile(outputImage);
-					Intent intentPhoto = new Intent("android.media.action.IMAGE_CAPTURE"); 
+					System.out.println(imageUri);
+					Intent intentPhoto = new Intent("android.media.action.IMAGE_CAPTURE");
 					intentPhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 					startActivityForResult(intentPhoto, TAKE_PHOTO);
+
+					// 调用系统相机拍照
+					
+//		             File file = new File(Environment.getExternalStorageDirectory().getPath()+"/appdiary/image/");
+//		             //是否是文件夹，不是就创建文件夹
+//		             if (!file.exists()) file.mkdirs();
+//		             SimpleDateFormat timeStampFormat =new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+//		              //指定保存路径
+//		             pathTakePhoto = Environment.getExternalStorageDirectory().getPath()+"/appdiary/image/" +
+//		            		 timeStampFormat.format(new Date()) + ".jpg";
+//		             System.out.println(pathTakePhoto);
+//		             Intent intentFromCapture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//		             startActivityForResult(intentFromCapture, TAKE_PHOTO);
 					break;
 				case 2:
 					dialog.dismiss();
@@ -216,84 +232,77 @@ public class UpdateInfoActivity extends BaseActivity {
 
 		}, true, true, new Object());
 	}
-	
-    //获取图片路径 响应startActivityForResult    
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {    
-        super.onActivityResult(requestCode, resultCode, data);          
-        //打开图片    
-        if(resultCode==RESULT_OK && requestCode==IMAGE_OPEN) {          
-            Uri uri = data.getData();    
-            if (!TextUtils.isEmpty(uri.getAuthority())) {    
-                //查询选择图片    
-                Cursor cursor = getContentResolver().query(    
-                        uri,    
-                        new String[] { MediaStore.Images.Media.DATA },    
-                        null,     
-                        null,     
-                        null);    
-                //返回 没找到选择图片    
-                if (null == cursor) {    
-                    return;    
-                }    
-                //光标移动至开头 获取图片路径    
-                cursor.moveToFirst();    
-                pathImage = cursor.getString(cursor    
-                        .getColumnIndex(MediaStore.Images.Media.DATA));    
-            }  
-        }  //end if 打开图片  
-        if(resultCode==RESULT_OK && requestCode==GET_DATA) { 
-            pathImage = data.getStringExtra("pathProcess");
-        }
-        //����
-        if(resultCode==RESULT_OK && requestCode==TAKE_PHOTO) {  
-        	 pathImage = pathTakePhoto;
-//        	Intent intent = new Intent("com.android.camera.action.CROP"); //����  
-//            intent.setDataAndType(imageUri, "image/*"); 
-//            intent.putExtra("scale", true);  
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);  
-//            //�㲥ˢ�����   
-//            Intent intentBc = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);  
-//            intentBc.setData(imageUri);       
-//            this.sendBroadcast(intentBc);      
-//            //������������
-//			Intent intentPut = new Intent(this, ProcessActivity.class); //���->����
-//			intentPut.putExtra("path", pathTakePhoto);
-//			//startActivity(intent);
-//			startActivityForResult(intentPut, GET_DATA);
-        }
-    }  
-	
-	//刷新图片  
-    @Override  
-    protected void onResume() {  
-        super.onResume();  
-        if(!TextUtils.isEmpty(pathImage)){  
-            Bitmap addbmp=BitmapFactory.decodeFile(pathImage);  
-            HashMap<String, Object> map = new HashMap<String, Object>();  
-            map.put("itemImage", addbmp);  
-            imageItem.add(map);  
-            simpleAdapter = new SimpleAdapter(this,   
-                    imageItem, R.layout.griditem_addpic,   
-                    new String[] { "itemImage"}, new int[] { R.id.imageView1});   
-            simpleAdapter.setViewBinder(new ViewBinder() {    
-                @Override    
-                public boolean setViewValue(View view, Object data,    
-                        String textRepresentation) {    
-                    // TODO Auto-generated method stub    
-                    if(view instanceof ImageView && data instanceof Bitmap){    
-                        ImageView i = (ImageView)view;    
-                        i.setImageBitmap((Bitmap) data);    
-                        return true;    
-                    }    
-                    return false;    
-                }  
-            });   
-            info_add_gv_images.setAdapter(simpleAdapter);  
-            simpleAdapter.notifyDataSetChanged();  
-            //刷新后释放防止手机休眠后自动添加  
-            pathImage = null;  
-        }  
-    }  
+
+	// 获取图片路径 响应startActivityForResult
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// 打开图片
+		if (resultCode == RESULT_OK && requestCode == IMAGE_OPEN) {
+			Uri uri = data.getData();
+			if (!TextUtils.isEmpty(uri.getAuthority())) {
+				// 查询选择图片
+				Cursor cursor = getContentResolver().query(uri, new String[] { MediaStore.Images.Media.DATA }, null,
+						null, null);
+				// 返回 没找到选择图片
+				if (null == cursor) {
+					return;
+				}
+				// 光标移动至开头 获取图片路径
+				cursor.moveToFirst();
+				pathImage = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+			}
+		} // end if 打开图片
+		if (resultCode == RESULT_OK && requestCode == GET_DATA) {
+			pathImage = imageUri.toString();
+		}
+		// ����
+		if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {
+			 Intent intent = new Intent("com.android.camera.action.CROP");
+			 intent.setDataAndType(imageUri, "image/*");
+			 intent.putExtra("scale", true);
+			 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+			 Intent intentBc = new
+			 Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			 intentBc.setData(imageUri);
+			 this.sendBroadcast(intentBc);
+//			 //������������
+//			 Intent intentPut = new Intent(this, ProcessActivity.class);
+//			 //���->����
+//			 intentPut.putExtra("path", pathTakePhoto);
+//			 //startActivity(intent);
+			 startActivityForResult(intent, GET_DATA);
+		}
+	}
+
+	// 刷新图片
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (!TextUtils.isEmpty(pathImage)) {
+			Bitmap addbmp = BitmapFactory.decodeFile(pathImage);
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("itemImage", addbmp);
+			imageItem.add(map);
+			simpleAdapter = new SimpleAdapter(this, imageItem, R.layout.griditem_addpic, new String[] { "itemImage" },
+					new int[] { R.id.imageView1 });
+			simpleAdapter.setViewBinder(new ViewBinder() {
+				@Override
+				public boolean setViewValue(View view, Object data, String textRepresentation) {
+					// TODO Auto-generated method stub
+					if (view instanceof ImageView && data instanceof Bitmap) {
+						ImageView i = (ImageView) view;
+						i.setImageBitmap((Bitmap) data);
+						return true;
+					}
+					return false;
+				}
+			});
+			info_add_gv_images.setAdapter(simpleAdapter);
+			simpleAdapter.notifyDataSetChanged();
+			// 刷新后释放防止手机休眠后自动添加
+			pathImage = null;
+		}
+	}
 
 	protected void DeleteDialog(final int position) {
 		AlertDialog.Builder builder = new Builder(UpdateInfoActivity.this);

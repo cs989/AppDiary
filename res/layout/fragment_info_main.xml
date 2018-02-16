@@ -60,17 +60,19 @@
             android:layout_width="70dp"
             android:layout_height="35dp"
             android:layout_marginLeft="60dp"
-            android:gravity="center"
             android:background="#F6F6F6"
             android:clickable="false"
+            android:gravity="center"
             android:text="@string/find_str_add"
             android:textColor="#FF6000"
             android:textSize="30sp" />
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/info_vp"
+    <FrameLayout
+        android:id="@+id/fragment_info_flyt_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </FrameLayout>
 
 </LinearLayout>

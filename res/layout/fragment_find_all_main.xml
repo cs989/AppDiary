@@ -30,14 +30,13 @@
             app:textColor="#595959"
             app:textSize="16sp" />
 
-        <ListView
+        <com.hispital.appdiary.view.SlideListView
             android:id="@+id/info_diary_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:listSelector="@drawable/listview_item_bg"
             android:overScrollMode="never"
-            android:visibility="gone" >
-        </ListView>
+            android:visibility="gone" />
     </FrameLayout>
 
 </in.srain.cube.views.ptr.PtrFrameLayout>

@@ -8,12 +8,8 @@ import com.hispital.appdiary.util.JListKit;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -90,7 +86,7 @@ public class InfoFragment extends BaseFragment {
 	}
 	
 	
-	@OnClick({ R.id.fragment_find_tv_focused, R.id.fragment_find_tv_all ,R.id.fragment_find_info_btn_add })
+	@OnClick ({ R.id.fragment_find_tv_focused, R.id.fragment_find_tv_all ,R.id.fragment_find_info_btn_add })
 	public void viewOnClick(View view)
 	{
 		ft = getChildFragmentManager().beginTransaction();

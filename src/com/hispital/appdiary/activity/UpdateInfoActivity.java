@@ -1,15 +1,23 @@
 package com.hispital.appdiary.activity;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import com.hispital.appdiary.R;
+import com.hispital.appdiary.application.LocalApplication;
+import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.view.DialogMaker;
 import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.hispital.appdiary.view.ToastMaker;
+import com.lidroid.xutils.db.table.KeyValue;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
@@ -26,6 +34,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
@@ -53,6 +62,10 @@ public class UpdateInfoActivity extends BaseActivity {
 	// 标题
 	@ViewInject(R.id.info_add_et_title)
 	EditText info_add_et_title;
+
+	// 标题
+	@ViewInject(R.id.info_add_et_context)
+	EditText info_add_et_context;
 
 	// 上传图片
 	@ViewInject(R.id.info_add_gv_images)
@@ -157,12 +170,8 @@ public class UpdateInfoActivity extends BaseActivity {
 			break;
 		// 保存
 		case R.id.info_add_iv_save:
-			if (imageItem.size() == 1) {
-				ToastMaker.showShortToast("");
-				return;
-			}
-
-			ToastMaker.showShortToast("");
+			updateImage();
+			ToastMaker.showShortToast("保存成功");
 			break;
 		// 留言提交
 		case R.id.msg_post_bt_context:
@@ -172,6 +181,50 @@ public class UpdateInfoActivity extends BaseActivity {
 		default:
 			break;
 		}
+	}
+
+	protected boolean updateImage() {
+		if (imageItem.size() == 1) {
+			return false;
+		}
+
+		RequestParams params = new RequestParams();
+		Iterator<HashMap<String, Object>> iterator = imageItem.iterator();
+		int i = -1;
+		while (iterator.hasNext()) {
+			String path = String.valueOf(iterator.next().get("pathImage"));
+			if (!path.equals("add_pic")) {
+				i = i + 1;
+				params.addBodyParameter("file" + i, new File(path));
+			}
+		}
+		params.addBodyParameter("imagecount", i + "");
+		params.addBodyParameter("title", info_add_et_title.getText().toString());
+		params.addBodyParameter("context", info_add_et_context.getText().toString());
+
+		final Handler handler = new Handler();
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "upLoad", params,
+				new RequestCallBack<String>() {
+
+					@Override
+					public void onFailure(HttpException arg0, String arg1) {
+						// 回送消息
+						handler.sendEmptyMessage(-1);
+					}
+
+					@Override
+					public void onLoading(long total, long current, boolean isUploading) {
+						super.onLoading(total, current, isUploading);
+					}
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						// 回送消息
+						handler.sendEmptyMessage(1);
+					}
+				});
+
+		return false;
 	}
 
 	protected void AddImageDialog() {
@@ -205,17 +258,22 @@ public class UpdateInfoActivity extends BaseActivity {
 					startActivityForResult(intentPhoto, TAKE_PHOTO);
 
 					// 调用系统相机拍照
-					
-//		             File file = new File(Environment.getExternalStorageDirectory().getPath()+"/appdiary/image/");
-//		             //是否是文件夹，不是就创建文件夹
-//		             if (!file.exists()) file.mkdirs();
-//		             SimpleDateFormat timeStampFormat =new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-//		              //指定保存路径
-//		             pathTakePhoto = Environment.getExternalStorageDirectory().getPath()+"/appdiary/image/" +
-//		            		 timeStampFormat.format(new Date()) + ".jpg";
-//		             System.out.println(pathTakePhoto);
-//		             Intent intentFromCapture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//		             startActivityForResult(intentFromCapture, TAKE_PHOTO);
+
+					// File file = new
+					// File(Environment.getExternalStorageDirectory().getPath()+"/appdiary/image/");
+					// //是否是文件夹，不是就创建文件夹
+					// if (!file.exists()) file.mkdirs();
+					// SimpleDateFormat timeStampFormat =new
+					// SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+					// //指定保存路径
+					// pathTakePhoto =
+					// Environment.getExternalStorageDirectory().getPath()+"/appdiary/image/"
+					// +
+					// timeStampFormat.format(new Date()) + ".jpg";
+					// System.out.println(pathTakePhoto);
+					// Intent intentFromCapture = new
+					// Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+					// startActivityForResult(intentFromCapture, TAKE_PHOTO);
 					break;
 				case 2:
 					dialog.dismiss();
@@ -257,20 +315,19 @@ public class UpdateInfoActivity extends BaseActivity {
 		}
 		// ����
 		if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {
-			 Intent intent = new Intent("com.android.camera.action.CROP");
-			 intent.setDataAndType(imageUri, "image/*");
-			 intent.putExtra("scale", true);
-			 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-			 Intent intentBc = new
-			 Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-			 intentBc.setData(imageUri);
-			 this.sendBroadcast(intentBc);
-//			 //������������
-//			 Intent intentPut = new Intent(this, ProcessActivity.class);
-//			 //���->����
-//			 intentPut.putExtra("path", pathTakePhoto);
-//			 //startActivity(intent);
-			 startActivityForResult(intent, GET_DATA);
+			Intent intent = new Intent("com.android.camera.action.CROP");
+			intent.setDataAndType(imageUri, "image/*");
+			intent.putExtra("scale", true);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+			Intent intentBc = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			intentBc.setData(imageUri);
+			this.sendBroadcast(intentBc);
+			// //������������
+			// Intent intentPut = new Intent(this, ProcessActivity.class);
+			// //���->����
+			// intentPut.putExtra("path", pathTakePhoto);
+			// //startActivity(intent);
+			startActivityForResult(intent, GET_DATA);
 		}
 	}
 
@@ -282,6 +339,7 @@ public class UpdateInfoActivity extends BaseActivity {
 			Bitmap addbmp = BitmapFactory.decodeFile(pathImage);
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("itemImage", addbmp);
+			map.put("pathImage", pathImage);
 			imageItem.add(map);
 			simpleAdapter = new SimpleAdapter(this, imageItem, R.layout.griditem_addpic, new String[] { "itemImage" },
 					new int[] { R.id.imageView1 });

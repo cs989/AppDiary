@@ -144,7 +144,7 @@ public class UpdateInfoActivity extends BaseActivity {
 		info_add_gv_images.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				if (imageItem.size() == 10) {
+				if (imageItem.size() == 9) {
 					ToastMaker.showShortToast("最多添加8张图片");
 				} else if (position == 0) {
 					// Toast.makeText(MainActivity.this, "���ͼƬ",
@@ -171,7 +171,7 @@ public class UpdateInfoActivity extends BaseActivity {
 		// 保存
 		case R.id.info_add_iv_save:
 			updateImage();
-			ToastMaker.showShortToast("保存成功");
+			ToastMaker.showShortToast("正在上传");
 			break;
 		// 留言提交
 		case R.id.msg_post_bt_context:
@@ -190,25 +190,24 @@ public class UpdateInfoActivity extends BaseActivity {
 
 		RequestParams params = new RequestParams();
 		Iterator<HashMap<String, Object>> iterator = imageItem.iterator();
-		int i = -1;
+		int i = 0;
 		while (iterator.hasNext()) {
 			String path = String.valueOf(iterator.next().get("pathImage"));
 			if (!path.equals("add_pic")) {
-				i = i + 1;
-				params.addBodyParameter("file" + i, new File(path));
+				params.addBodyParameter("file" + i++, new File(path));
 			}
 		}
-		params.addBodyParameter("imagecount", i + "");
 		params.addBodyParameter("title", info_add_et_title.getText().toString());
-		params.addBodyParameter("context", info_add_et_context.getText().toString());
+		params.addBodyParameter("content", info_add_et_context.getText().toString());
 
 		final Handler handler = new Handler();
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "upLoad", params,
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "createRecord", params,
 				new RequestCallBack<String>() {
 
 					@Override
 					public void onFailure(HttpException arg0, String arg1) {
 						// 回送消息
+						ToastMaker.showShortToast("上传失败");
 						handler.sendEmptyMessage(-1);
 					}
 
@@ -220,6 +219,7 @@ public class UpdateInfoActivity extends BaseActivity {
 					@Override
 					public void onSuccess(ResponseInfo<String> arg0) {
 						// 回送消息
+						ToastMaker.showShortToast("上传成功");
 						handler.sendEmptyMessage(1);
 					}
 				});

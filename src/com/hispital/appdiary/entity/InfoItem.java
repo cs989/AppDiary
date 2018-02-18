@@ -5,18 +5,25 @@ package com.hispital.appdiary.entity;
  * 
  * @author blue
  */
-public class InfoItem
-{
+public class InfoItem {
 	// id
-	public String nid;
-	// 新闻id
-	public int id;
-	// 图片
-	public String cover_image;
+	public int rid;
+	// 病人id
+	public int pid;
+	// 病人头像
+	public String purl;
+	// 用户
+	public int uid;
 	// 标题
 	public String title;
-	// 新闻类型
-	public String type;
+	// 内容
+	public String content;
+	// 创建时间
+	public String ftime;
+	// 消息集合
+	public String msg_list;
 	// 图片集合
 	public String image_list;
+	
+	public int msg_count;
 }

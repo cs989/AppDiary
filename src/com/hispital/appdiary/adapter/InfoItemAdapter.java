@@ -47,23 +47,23 @@ public class InfoItemAdapter extends SimpleBaseAdapter<InfoItem> {
 			entityHolder = (EntityHolder) convertView.getTag();
 		}
 
-		entityHolder.main_tv_delete.setTag(datas.get(position).id);
+		entityHolder.main_tv_delete.setTag(datas.get(position).rid);
 		entityHolder.main_tv_delete.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				System.out.println("陈胜测试项目"+v.getTag());
+				System.out.println("陈胜测试项目" + v.getTag());
 				// datas.remove(datas.get(position));
 				datas.remove(v.getTag());
 				notifyDataSetChanged();
 				listView.turnToNormal();
 			}
 		});
-		entityHolder.main_tv_edit.setTag(datas.get(position).id);
+		entityHolder.main_tv_edit.setTag(datas.get(position).rid);
 		entityHolder.main_tv_edit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-//				InfoItem temp = getItem(position);
-				//datas.remove(datas.get(position).id);
+				// InfoItem temp = getItem(position);
+				// datas.remove(datas.get(position).id);
 				// datas.add(0, temp);
 				notifyDataSetChanged();
 				listView.turnToNormal();
@@ -71,11 +71,13 @@ public class InfoItemAdapter extends SimpleBaseAdapter<InfoItem> {
 		});
 
 		entityHolder.item_tv_title.setText(datas.get(position).title);
-		// 给imageview设置一个tag，保证异步加载图片时不会乱序h
-		entityHolder.item_iv_img.setTag(ConstantsUtil.IMAGE_URL + datas.get(position).cover_image);
+		entityHolder.item_tv_time.setText(datas.get(position).ftime);
+		entityHolder.item_tv_count.setText(datas.get(position).msg_count + "");
+		// 给imageview设置一个tag，保证异步加载图片时不会乱序
+		entityHolder.item_iv_img.setTag(ConstantsUtil.IMAGE_URL + datas.get(position).purl);
 		// 开启异步加载图片
 		AsyncImageLoader.getInstance(c).loadBitmaps(listView, entityHolder.item_iv_img,
-				ConstantsUtil.IMAGE_URL + datas.get(position).cover_image, DisplayUtil.dip2px(c, 105),
+				ConstantsUtil.IMAGE_URL + datas.get(position).purl, DisplayUtil.dip2px(c, 105),
 				DisplayUtil.dip2px(c, 70));
 
 		return convertView;
@@ -86,6 +88,10 @@ public class InfoItemAdapter extends SimpleBaseAdapter<InfoItem> {
 		ImageView item_iv_img;
 		@ViewInject(R.id.item_tv_title)
 		TextView item_tv_title;
+		@ViewInject(R.id.item_tv_time)
+		TextView item_tv_time;
+		@ViewInject(R.id.item_tv_count)
+		TextView item_tv_count;
 		@ViewInject(R.id.main_tv_edit)
 		TextView main_tv_edit;
 		@ViewInject(R.id.main_tv_delete)

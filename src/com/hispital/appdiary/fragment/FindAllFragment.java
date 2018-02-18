@@ -55,6 +55,8 @@ public class FindAllFragment extends BaseFragment {
 	// 是否正在加载数据
 	private boolean isLoading = false;
 
+	private boolean isUpdate = false;
+
 	private int pageIndex = 0;
 	private int pageSize = 10;
 
@@ -82,21 +84,14 @@ public class FindAllFragment extends BaseFragment {
 		// 绑定适配器
 		info_diary_lv.setAdapter(adapter);
 
-		// initPtr();
-
-		for (int i = 0; i < 20; i++) {
-			InfoItem item = new InfoItem();
-			item.id = i;
-			item.title = "这是第" + i + "个标题";
-			datas.add(item);
-		}
+		initPtr();
 
 		pw.stopSpinning();
 		pw.setVisibility(View.GONE);
 		info_diary_lv.setVisibility(View.VISIBLE);
 		adapter.refreshDatas(datas);
 		// 加载数据
-		// loadListData();
+		loadListData();
 	}
 
 	// 初始化下拉刷新
@@ -114,17 +109,16 @@ public class FindAllFragment extends BaseFragment {
 
 			@Override
 			public void onRefreshBegin(PtrFrameLayout frame) {
-				frame.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						ptr.refreshComplete();
-					}
-				}, 1800);
+				isUpdate = true;
+				pageIndex = 0;
+				isMore = true;
+				isLoading=true;
+				loadListData();
 			}
 
 			@Override
 			public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-				return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+				return PtrDefaultHandler.checkContentCanBePulledDown(frame, info_diary_lv, header);
 			}
 		});
 	}
@@ -136,13 +130,17 @@ public class FindAllFragment extends BaseFragment {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("pageIndex", pageIndex + "");
 		params.addBodyParameter("pageSize", pageSize + "");
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "login", params,
-				new RequestCallBack<String>() {
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getRecordList",
+				params, new RequestCallBack<String>() {
 
 					@Override
 					public void onFailure(HttpException arg0, String arg1) {
-						pw.stopSpinning();
-						pw.setVisibility(View.GONE);
+						if (isUpdate) {
+							ptr.refreshComplete();
+						} else {
+							pw.stopSpinning();
+							pw.setVisibility(View.GONE);
+						}
 						ToastMaker.showShortToast("请求失败，请检查网络后重试");
 					}
 
@@ -162,6 +160,12 @@ public class FindAllFragment extends BaseFragment {
 									info_diary_lv.removeFooterView(loading_llyt);
 								}
 							}
+							if (isUpdate) {
+								isUpdate = false;
+								ptr.refreshComplete();
+								datas.clear();
+							}
+
 							datas.addAll(tmp);
 							adapter.refreshDatas(datas);
 						} else {

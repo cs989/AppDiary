@@ -3,10 +3,12 @@ package com.hispital.appdiary.adapter;
 import java.util.List;
 
 import com.hispital.appdiary.R;
+import com.hispital.appdiary.activity.UpdateInfoActivity;
 import com.hispital.appdiary.cache.AsyncImageLoader;
 import com.hispital.appdiary.entity.InfoItem;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
+import com.hispital.appdiary.util.JStringKit;
 import com.hispital.appdiary.view.SlideListView;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -62,11 +64,12 @@ public class InfoItemAdapter extends SimpleBaseAdapter<InfoItem> {
 		entityHolder.main_tv_edit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// InfoItem temp = getItem(position);
-				// datas.remove(datas.get(position).id);
-				// datas.add(0, temp);
-				notifyDataSetChanged();
-				listView.turnToNormal();
+				
+				if(JStringKit.isEmpty(v.getTag().toString())){
+					UpdateInfoActivity.startActivity(c, v.getTag().toString());
+				}
+//				notifyDataSetChanged();
+//				listView.turnToNormal();
 			}
 		});
 

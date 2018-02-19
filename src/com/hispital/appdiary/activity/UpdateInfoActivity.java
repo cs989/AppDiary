@@ -1,18 +1,20 @@
 package com.hispital.appdiary.activity;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import com.hispital.appdiary.R;
+import com.hispital.appdiary.adapter.ImageItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
+import com.hispital.appdiary.entity.ImageItem;
 import com.hispital.appdiary.util.ConstantsUtil;
+import com.hispital.appdiary.util.JListKit;
+import com.hispital.appdiary.util.JStringKit;
 import com.hispital.appdiary.view.DialogMaker;
 import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.hispital.appdiary.view.ToastMaker;
-import com.lidroid.xutils.db.table.KeyValue;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -39,6 +41,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -88,12 +91,19 @@ public class UpdateInfoActivity extends BaseActivity {
 	private final int TAKE_PHOTO = 3;
 	private String pathImage;
 	private String pathTakePhoto;
-	private ArrayList<HashMap<String, Object>> imageItem;
+	// private ArrayList<HashMap<String, Object>> imageItem;
+
+	List<ImageItem> datas = JListKit.newArrayList();
 
 	private Uri imageUri;
 	private Bitmap bmp;
 
-	private SimpleAdapter simpleAdapter;
+	// private SimpleAdapter simpleAdapter;
+
+	// 适配器
+	private ImageItemAdapter adapter;
+
+	private String rid;
 
 	// 静态方法启动activity
 	public static void startActivity(Context context) {
@@ -101,10 +111,18 @@ public class UpdateInfoActivity extends BaseActivity {
 		context.startActivity(intent);
 	}
 
+	// 静态方法启动activity
+	public static void startActivity(Context context, String rid) {
+		Intent intent = new Intent(context, UpdateInfoActivity.class);
+		intent.putExtra("rid", rid);
+		context.startActivity(intent);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		rid = getIntent().getStringExtra("rid");
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); // 防止下面输入框无法获取焦点
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);// 禁止横屏幕
 	}
@@ -116,35 +134,47 @@ public class UpdateInfoActivity extends BaseActivity {
 
 	@Override
 	protected void initParams() {
-		// TODO Auto-generated method stub
+		if (JStringKit.isEmpty(rid)) {
+			msg_post_bt_context.setVisibility(View.GONE);
+			msg_item_lv.setVisibility(View.GONE);
+		} else {
+			msg_post_bt_context.setVisibility(View.VISIBLE);
+			msg_item_lv.setVisibility(View.VISIBLE);
+		}
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.gridview_addpic);
-		imageItem = new ArrayList<HashMap<String, Object>>();
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("itemImage", bmp);
-		map.put("pathImage", "add_pic");
-		imageItem.add(map);
-		simpleAdapter = new SimpleAdapter(this, imageItem, R.layout.griditem_addpic, new String[] { "itemImage" },
-				new int[] { R.id.info_add_gv_images });
 
-		simpleAdapter.setViewBinder(new ViewBinder() {
-			@Override
-			public boolean setViewValue(View view, Object data, String textRepresentation) {
-				// TODO Auto-generated method stub
-				if (view instanceof ImageView && data instanceof Bitmap) {
-					ImageView i = (ImageView) view;
-					i.setImageBitmap((Bitmap) data);
-					return true;
-				}
-				return false;
-			}
-		});
-		info_add_gv_images.setAdapter(simpleAdapter);
+		adapter = new ImageItemAdapter(this, datas, info_add_gv_images);
+
+		// imageItem = new ArrayList<HashMap<String, Object>>();
+		// HashMap<String, Object> map = new HashMap<String, Object>();
+		// map.put("itemImage", bmp);
+		// map.put("pathImage", "add_pic");
+		// imageItem.add(map);
+		// simpleAdapter = new SimpleAdapter(this, imageItem,
+		// R.layout.griditem_addpic, new String[] { "itemImage" },
+		// new int[] { R.id.info_add_gv_images });
+		//
+		// simpleAdapter.setViewBinder(new ViewBinder() {
+		// @Override
+		// public boolean setViewValue(View view, Object data, String
+		// textRepresentation) {
+		// // TODO Auto-generated method stub
+		// if (view instanceof ImageView && data instanceof Bitmap) {
+		// ImageView i = (ImageView) view;
+		// i.setImageBitmap((Bitmap) data);
+		// return true;
+		// }
+		// return false;
+		// }
+		// });
+		info_add_gv_images.setAdapter(adapter);
+		// info_add_gv_images.setAdapter(simpleAdapter);
 
 		// gridview添加点击事件
 		info_add_gv_images.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				if (imageItem.size() == 9) {
+				if (datas.size() == 8) {
 					ToastMaker.showShortToast("最多添加8张图片");
 				} else if (position == 0) {
 					// Toast.makeText(MainActivity.this, "���ͼƬ",
@@ -159,6 +189,17 @@ public class UpdateInfoActivity extends BaseActivity {
 
 			}
 		});
+
+		// 初始化添加图片按钮图片
+		ImageItem item = new ImageItem();
+		item.iurl = "add_pic";
+		item.bmp = bmp;
+		datas.add(item);
+		adapter.refreshDatas(datas);
+	}
+
+	public void loadInfoData() {
+
 	}
 
 	@OnClick({ R.id.info_add_iv_back, R.id.info_add_iv_save, R.id.msg_post_bt_context })
@@ -184,25 +225,33 @@ public class UpdateInfoActivity extends BaseActivity {
 	}
 
 	protected boolean updateImage() {
-		if (imageItem.size() == 1) {
+		if (datas.size() == 0) {
 			return false;
 		}
 
 		RequestParams params = new RequestParams();
-		Iterator<HashMap<String, Object>> iterator = imageItem.iterator();
+		// Iterator<HashMap<String, Object>> iterator = imageItem.iterator();
+		// int i = 0;
+		// while (iterator.hasNext()) {
+		// String path = String.valueOf(iterator.next().get("pathImage"));
+		// if (!path.equals("add_pic")) {
+		// params.addBodyParameter("file" + i++, new File(path));
+		// }
+		// }
+
 		int i = 0;
-		while (iterator.hasNext()) {
-			String path = String.valueOf(iterator.next().get("pathImage"));
-			if (!path.equals("add_pic")) {
+		for (ImageItem item : datas) {
+			String path = item.iurl;
+			if (!path.equals("add_pic"))
 				params.addBodyParameter("file" + i++, new File(path));
-			}
 		}
+
 		params.addBodyParameter("title", info_add_et_title.getText().toString());
 		params.addBodyParameter("content", info_add_et_context.getText().toString());
 
 		final Handler handler = new Handler();
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "createRecord", params,
-				new RequestCallBack<String>() {
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "createRecord",
+				params, new RequestCallBack<String>() {
 
 					@Override
 					public void onFailure(HttpException arg0, String arg1) {
@@ -337,26 +386,33 @@ public class UpdateInfoActivity extends BaseActivity {
 		super.onResume();
 		if (!TextUtils.isEmpty(pathImage)) {
 			Bitmap addbmp = BitmapFactory.decodeFile(pathImage);
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("itemImage", addbmp);
-			map.put("pathImage", pathImage);
-			imageItem.add(map);
-			simpleAdapter = new SimpleAdapter(this, imageItem, R.layout.griditem_addpic, new String[] { "itemImage" },
-					new int[] { R.id.imageView1 });
-			simpleAdapter.setViewBinder(new ViewBinder() {
-				@Override
-				public boolean setViewValue(View view, Object data, String textRepresentation) {
-					// TODO Auto-generated method stub
-					if (view instanceof ImageView && data instanceof Bitmap) {
-						ImageView i = (ImageView) view;
-						i.setImageBitmap((Bitmap) data);
-						return true;
-					}
-					return false;
-				}
-			});
-			info_add_gv_images.setAdapter(simpleAdapter);
-			simpleAdapter.notifyDataSetChanged();
+			ImageItem item = new ImageItem();
+			item.bmp = addbmp;
+			item.iurl = pathImage;
+			datas.add(item);
+			// HashMap<String, Object> map = new HashMap<String, Object>();
+			// map.put("itemImage", addbmp);
+			// map.put("pathImage", pathImage);
+			// imageItem.add(map);
+			adapter.refreshDatas(datas);
+			// simpleAdapter = new SimpleAdapter(this, imageItem,
+			// R.layout.griditem_addpic, new String[] { "itemImage" },
+			// new int[] { R.id.imageView1 });
+			// simpleAdapter.setViewBinder(new ViewBinder() {
+			// @Override
+			// public boolean setViewValue(View view, Object data, String
+			// textRepresentation) {
+			// // TODO Auto-generated method stub
+			// if (view instanceof ImageView && data instanceof Bitmap) {
+			// ImageView i = (ImageView) view;
+			// i.setImageBitmap((Bitmap) data);
+			// return true;
+			// }
+			// return false;
+			// }
+			// });
+			// info_add_gv_images.setAdapter(simpleAdapter);
+			// simpleAdapter.notifyDataSetChanged();
 			// 刷新后释放防止手机休眠后自动添加
 			pathImage = null;
 		}
@@ -370,8 +426,8 @@ public class UpdateInfoActivity extends BaseActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				imageItem.remove(position);
-				simpleAdapter.notifyDataSetChanged();
+				datas.remove(datas.get(position));
+				adapter.notifyDataSetChanged();
 			}
 		});
 		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

@@ -14,6 +14,8 @@ public class InfoItem {
 	public String purl;
 	// 用户
 	public int uid;
+	//用户姓名
+	public String name;
 	// 标题
 	public String title;
 	// 内容

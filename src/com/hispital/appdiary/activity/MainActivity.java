@@ -66,8 +66,7 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (savedInstanceState == null)
-		{
+		if (savedInstanceState == null) {
 			viewOnClick(diary_llyt_info);
 		}
 	}
@@ -122,7 +121,6 @@ public class MainActivity extends BaseActivity {
 	}
 
 	// 切换tab背景
-	@SuppressWarnings("deprecation")
 	private void tabBgChange(int index) {
 		switch (index) {
 		case 0:
@@ -195,67 +193,55 @@ public class MainActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean dispatchTouchEvent(MotionEvent ev)
-	{
-		if (fragmentOnTouchListener != null)
-		{
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		if (fragmentOnTouchListener != null) {
 			fragmentOnTouchListener.onTouch(ev);
 		}
 		return super.dispatchTouchEvent(ev);
 	}
 
-	public interface FragmentOnTouchListener
-	{
+	public interface FragmentOnTouchListener {
 		public boolean onTouch(MotionEvent ev);
 	}
 
-	public void registerFragmentOnTouchListener(FragmentOnTouchListener fragmentOnTouchListener)
-	{
+	public void registerFragmentOnTouchListener(FragmentOnTouchListener fragmentOnTouchListener) {
 		this.fragmentOnTouchListener = fragmentOnTouchListener;
 	}
 
-	public void unregisterMyOnTouchListener(FragmentOnTouchListener myOnTouchListener)
-	{
+	public void unregisterMyOnTouchListener(FragmentOnTouchListener myOnTouchListener) {
 		this.fragmentOnTouchListener = null;
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState)
-	{
+	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean("isRecycle", true);
 		outState.putInt("chooseIndex", chooseIndex);
 	}
 
 	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState)
-	{
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		isRecycle = savedInstanceState.getBoolean("isRecycle");
 		chooseIndex = savedInstanceState.getInt("chooseIndex");
 	}
 
 	@Override
-	protected void onResume()
-	{
+	protected void onResume() {
 		super.onResume();
-		if (isRecycle)
-		{
+		if (isRecycle) {
 			tabBgChange(chooseIndex);
 		}
 	}
 
 	@Override
-	public void onBackPressed()
-	{
+	public void onBackPressed() {
 		long secondTime = System.currentTimeMillis();
 		// 如果两次按键时间间隔大于1000毫秒，则不退出
-		if (secondTime - firstTime > 1000)
-		{
+		if (secondTime - firstTime > 1000) {
 			ToastMaker.showShortToast("再按一次退出客户端");
 			firstTime = secondTime;// 更新firstTime
-		} else
-		{
+		} else {
 			finish();
 		}
 	}

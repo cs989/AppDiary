@@ -45,6 +45,14 @@
             android:name="com.hispital.appdiary.activity.UpdateInfoActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name="com.hispital.appdiary.activity.ShowInfoActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.hispital.appdiary.activity.NewsPictureActivity"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

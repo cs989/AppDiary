@@ -18,5 +18,8 @@
     <!-- info add-->
     <string name="info_add_str_add">请编写病人相关情况。。。</string>
     <string name="msg_add_str_add">留言。。。</string>
+    
+       <!-- info show-->
+    <string name="info_show_str">相关情况。。。</string>
 
 </resources>

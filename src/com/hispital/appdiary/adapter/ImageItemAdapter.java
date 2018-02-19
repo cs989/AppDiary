@@ -8,11 +8,9 @@ import com.hispital.appdiary.entity.ImageItem;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
 import com.lidroid.xutils.ViewUtils;
-import android.support.v4.app.Fragment;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;

@@ -23,7 +23,6 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-import android.R.string;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -37,7 +36,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
@@ -64,7 +62,7 @@ public class UpdateInfoActivity extends BaseActivity {
 	@ViewInject(R.id.info_add_et_title)
 	EditText info_add_et_title;
 
-	// 标题
+	// 内容
 	@ViewInject(R.id.info_add_et_context)
 	EditText info_add_et_context;
 
@@ -255,8 +253,30 @@ public class UpdateInfoActivity extends BaseActivity {
 			break;
 		// 保存
 		case R.id.info_add_iv_save:
-			updateImage();
-			ToastMaker.showShortToast("正在上传");
+			DialogMaker.showCommonAlertDialog(this, "", "请选择", new String[] { "保存", "取消" }, new DialogCallBack() {
+				@Override
+				public void onButtonClicked(Dialog dialog, int position, Object tag) {
+					// TODO Auto-generated method stub
+					switch (position) {
+					case 0:
+						updateImage();
+						ToastMaker.showShortToast("正在上传");
+						break;
+					case 1:
+						dialog.dismiss();
+						break;
+					default:
+						break;
+					}
+				}
+
+				@Override
+				public void onCancelDialog(Dialog dialog, Object tag) {
+					return;
+				}
+
+			}, true, true, new Object());
+
 			break;
 		// 留言提交
 		case R.id.msg_post_bt_context:
@@ -322,6 +342,7 @@ public class UpdateInfoActivity extends BaseActivity {
 					public void onSuccess(ResponseInfo<String> arg0) {
 						// 回送消息
 						ToastMaker.showShortToast("上传成功");
+						finish();
 					}
 				});
 

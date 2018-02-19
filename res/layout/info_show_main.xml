@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- 顶部保存和返回按钮 -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#FF6000"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/info_show_iv_back"
+            android:layout_width="36dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_back" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/info_show_tv_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="标题"
+        android:maxLength="500"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#FF6000" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/info_show_tv_context"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/info_show_str"
+        android:maxLength="500"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textSize="15sp" />
+
+    <GridView
+        android:id="@+id/info_show_gv_images"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:columnWidth="80dp"
+        android:gravity="center"
+        android:numColumns="4"
+        android:scaleType="fitCenter"
+        android:stretchMode="columnWidth" >
+    </GridView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#FF6000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/msg_show_et_context"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:hint="@string/msg_add_str_add"
+            android:maxLength="100"
+            android:singleLine="false"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/msg_post_bt_context"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="留言" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#FF6000" />
+
+    <ListView
+        android:id="@+id/msg_item_lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@drawable/listview_item_bg"
+        android:overScrollMode="never"
+        android:visibility="gone" >
+    </ListView>
+
+</LinearLayout>

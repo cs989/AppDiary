@@ -1,14 +1,14 @@
 package com.hispital.appdiary.activity;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.adapter.ImageItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.ImageItem;
+import com.hispital.appdiary.entity.InfoItem;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.JListKit;
 import com.hispital.appdiary.util.JStringKit;
@@ -23,6 +23,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
+import android.R.string;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -41,7 +42,6 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -49,8 +49,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 
 public class UpdateInfoActivity extends BaseActivity {
 
@@ -134,14 +132,12 @@ public class UpdateInfoActivity extends BaseActivity {
 
 	@Override
 	protected void initParams() {
-		if (JStringKit.isEmpty(rid)) {
-			msg_post_bt_context.setVisibility(View.GONE);
-			msg_item_lv.setVisibility(View.GONE);
-		} else {
-			msg_post_bt_context.setVisibility(View.VISIBLE);
-			msg_item_lv.setVisibility(View.VISIBLE);
-		}
+		// 默认图片加载数据
 		bmp = BitmapFactory.decodeResource(getResources(), R.drawable.gridview_addpic);
+		ImageItem item = new ImageItem();
+		item.iurl = "add_pic";
+		item.bmp = bmp;
+		datas.add(item);
 
 		adapter = new ImageItemAdapter(this, datas, info_add_gv_images);
 
@@ -186,19 +182,67 @@ public class UpdateInfoActivity extends BaseActivity {
 					// 1) + " ��ͼƬ",
 					// Toast.LENGTH_SHORT).show();
 				}
-
 			}
 		});
 
-		// 初始化添加图片按钮图片
-		ImageItem item = new ImageItem();
-		item.iurl = "add_pic";
-		item.bmp = bmp;
-		datas.add(item);
-		adapter.refreshDatas(datas);
+		if (JStringKit.isEmpty(rid)) {
+			msg_post_bt_context.setVisibility(View.GONE);
+			msg_item_lv.setVisibility(View.GONE);
+			adapter.refreshDatas(datas);
+		} else {
+			loadInfoData();
+			msg_post_bt_context.setVisibility(View.VISIBLE);
+			msg_item_lv.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void loadInfoData() {
+
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("rid", rid);
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getImageByRid",
+				params, new RequestCallBack<String>() {
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+
+						// String list =
+						// JSONObject.parseObject(arg0.result).getString("list");
+						List<ImageItem> tmp = JSONObject.parseArray(arg0.result, ImageItem.class);
+						if (JListKit.isNotEmpty(tmp)) {
+							datas.addAll(tmp);
+						}
+						adapter.refreshDatas(datas);
+					}
+
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						// TODO Auto-generated method stub
+						ToastMaker.showShortToast("数据返回失败");
+					}
+
+				});
+
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getRecordByRid",
+				params, new RequestCallBack<String>() {
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						// String list =
+						// JSONObject.parseObject(arg0.result).getString("list");
+						InfoItem tmp = JSONObject.parseObject(arg0.result, InfoItem.class);
+						if (tmp != null) {
+							info_add_et_title.setText(tmp.title);
+							info_add_et_context.setText(tmp.content);
+						}
+					}
+
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						// TODO Auto-generated method stub
+						ToastMaker.showShortToast("数据返回失败");
+					}
+				});
 
 	}
 
@@ -239,25 +283,34 @@ public class UpdateInfoActivity extends BaseActivity {
 		// }
 		// }
 
+		String netPath = "";
 		int i = 0;
+		String httpmethod = "updateRecord";
 		for (ImageItem item : datas) {
 			String path = item.iurl;
-			if (!path.equals("add_pic"))
-				params.addBodyParameter("file" + i++, new File(path));
+			if (!path.equals("add_pic")) {
+				if (item.bmp == null && !item.iurl.contains("http"))
+					netPath = netPath + item.iurl + ",";
+				else {
+					httpmethod = "updateRecordImage";
+					params.addBodyParameter("file" + i++, new File(item.iurl));
+				}
+			}
 		}
 
+		if (JStringKit.isNotEmpty(rid))
+			params.addBodyParameter("rid", rid + "");
 		params.addBodyParameter("title", info_add_et_title.getText().toString());
 		params.addBodyParameter("content", info_add_et_context.getText().toString());
+		params.addBodyParameter("netPath", netPath);
 
-		final Handler handler = new Handler();
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "createRecord",
-				params, new RequestCallBack<String>() {
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + httpmethod, params,
+				new RequestCallBack<String>() {
 
 					@Override
 					public void onFailure(HttpException arg0, String arg1) {
-						// 回送消息
+						// 回送消息、
 						ToastMaker.showShortToast("上传失败");
-						handler.sendEmptyMessage(-1);
 					}
 
 					@Override
@@ -269,7 +322,6 @@ public class UpdateInfoActivity extends BaseActivity {
 					public void onSuccess(ResponseInfo<String> arg0) {
 						// 回送消息
 						ToastMaker.showShortToast("上传成功");
-						handler.sendEmptyMessage(1);
 					}
 				});
 

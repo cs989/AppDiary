@@ -65,7 +65,7 @@ public class InfoItemAdapter extends SimpleBaseAdapter<InfoItem> {
 			@Override
 			public void onClick(View v) {
 				
-				if(JStringKit.isEmpty(v.getTag().toString())){
+				if(!JStringKit.isEmpty(v.getTag().toString())){
 					UpdateInfoActivity.startActivity(c, v.getTag().toString());
 				}
 //				notifyDataSetChanged();

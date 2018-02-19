@@ -42,15 +42,15 @@ public class ImageItemAdapter extends SimpleBaseAdapter<ImageItem> {
 			entityHolder = (EntityHolder) convertView.getTag();
 		}
 
-		//从服务器加载图片
-		if (datas.get(position).iurl.contains("http")) {
+		// 从服务器加载图片
+		if (datas.get(position).bmp == null) {
 			entityHolder.imageView1.setTag(ConstantsUtil.IMAGE_URL + datas.get(position).iurl);
 			// 开启异步加载图片
 			AsyncImageLoader.getInstance(c).loadBitmaps(gridview, entityHolder.imageView1,
 					ConstantsUtil.IMAGE_URL + datas.get(position).iurl, DisplayUtil.dip2px(c, 105),
 					DisplayUtil.dip2px(c, 70));
-		}else{
-			//从本地加载图片
+		} else {
+			// 从本地加载图片
 			entityHolder.imageView1.setTag(datas.get(position).iurl);
 			entityHolder.imageView1.setImageBitmap(datas.get(position).bmp);
 		}

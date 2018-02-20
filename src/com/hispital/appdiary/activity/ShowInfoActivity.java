@@ -171,8 +171,8 @@ public class ShowInfoActivity extends BaseActivity {
 	private void loadMsgData() {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("rid", rid);
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getMsgByRid",
-				params, new RequestCallBack<String>() {
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getMsgByRid", params,
+				new RequestCallBack<String>() {
 
 					@Override
 					public void onSuccess(ResponseInfo<String> arg0) {
@@ -199,10 +199,36 @@ public class ShowInfoActivity extends BaseActivity {
 			finish();
 			break;
 		case R.id.msg_post_bt_context:
-			finish();
+			postMsg();
 			break;
 		default:
 			break;
+		}
+	}
+
+	private void postMsg() {
+		String text = msg_show_et_context.getText() + "";
+		if (text.length() > 0) {
+			RequestParams params = new RequestParams();
+			params.addBodyParameter("rid", rid);
+			params.addBodyParameter("content", msg_show_et_context.getText() + "");
+			LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "createMsg",
+					params, new RequestCallBack<String>() {
+
+						@Override
+						public void onSuccess(ResponseInfo<String> arg0) {
+							datasMsg.clear();
+							loadMsgData();
+						}
+
+						@Override
+						public void onFailure(HttpException error, String msg) {
+							ToastMaker.showShortToast("数据返回失败");
+						}
+
+					});
+		} else {
+			ToastMaker.showShortToast("消息内容为空");
 		}
 	}
 

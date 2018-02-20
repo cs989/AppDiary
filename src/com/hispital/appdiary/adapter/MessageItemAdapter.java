@@ -3,8 +3,16 @@ package com.hispital.appdiary.adapter;
 import java.util.List;
 
 import com.hispital.appdiary.R;
+import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.MessageItem;
+import com.hispital.appdiary.util.ConstantsUtil;
+import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 import android.content.Context;
@@ -44,15 +52,42 @@ public class MessageItemAdapter extends SimpleBaseAdapter<MessageItem> {
 		entityHolder.item_msg_tv_time
 				.setText(datas.get(position).time.substring(0, 11) + " by " + datas.get(position).name);
 
+		final int tempposition = position;
 		// entityHolder.item_msg_tv_delete.setVisibility(View.GONE);
-		entityHolder.item_msg_tv_delete.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
 
-			}
-		});
+		if (datas.get(position).uid == 1) {
+			entityHolder.item_msg_tv_delete.setVisibility(View.VISIBLE);
+			entityHolder.item_msg_tv_delete.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					deleteMsg(tempposition);
+				}
+			});
+		} else {
+			entityHolder.item_msg_tv_delete.setVisibility(View.GONE);
+		}
 		return convertView;
+	}
+
+	private void deleteMsg(final int position) {
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("mid", datas.get(position).mid + "");
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "deleteMsgByMid",
+				params, new RequestCallBack<String>() {
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						datas.remove(position);
+						notifyDataSetChanged();
+					}
+
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						ToastMaker.showShortToast("数据返回失败");
+					}
+
+				});
 	}
 
 	private class EntityHolder {

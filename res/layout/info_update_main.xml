@@ -87,29 +87,6 @@
             android:textSize="10sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <EditText
-            android:id="@+id/msg_add_et_context"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:hint="@string/msg_add_str_add"
-            android:maxLength="100"
-            android:singleLine="false"
-            android:textColor="#000000"
-            android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/msg_post_bt_context"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="留言" />
-    </LinearLayout>
 
     <ListView
         android:id="@+id/msg_item_lv"

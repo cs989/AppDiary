@@ -5,14 +5,14 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.adapter.ImageItemAdapter;
+import com.hispital.appdiary.adapter.MessageItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.ImageItem;
 import com.hispital.appdiary.entity.InfoItem;
+import com.hispital.appdiary.entity.MessageItem;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.JListKit;
-import com.hispital.appdiary.view.DialogMaker;
 import com.hispital.appdiary.view.ToastMaker;
-import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -21,7 +21,6 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -74,8 +73,12 @@ public class ShowInfoActivity extends BaseActivity {
 	// image数据源
 	List<ImageItem> datas = JListKit.newArrayList();
 
+	// image数据源
+	List<MessageItem> datasMsg = JListKit.newArrayList();
+
 	// 适配器
 	private ImageItemAdapter adapter;
+	private MessageItemAdapter msg_adapter;
 
 	@Override
 	protected int getLayoutId() {
@@ -105,6 +108,9 @@ public class ShowInfoActivity extends BaseActivity {
 		adapter = new ImageItemAdapter(this, datas, info_show_gv_images);
 		info_show_gv_images.setAdapter(adapter);
 
+		msg_adapter = new MessageItemAdapter(this, datasMsg, msg_item_lv);
+		msg_item_lv.setAdapter(msg_adapter);
+
 		// gridview添加点击事件
 		info_show_gv_images.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -113,6 +119,7 @@ public class ShowInfoActivity extends BaseActivity {
 			}
 		});
 		loadInfoData();
+		loadMsgData();
 	}
 
 	private void loadInfoData() {
@@ -159,6 +166,29 @@ public class ShowInfoActivity extends BaseActivity {
 					}
 				});
 
+	}
+
+	private void loadMsgData() {
+		RequestParams params = new RequestParams();
+		params.addBodyParameter("rid", rid);
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getMsgByRid",
+				params, new RequestCallBack<String>() {
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						List<MessageItem> tmp = JSONObject.parseArray(arg0.result, MessageItem.class);
+						if (JListKit.isNotEmpty(tmp)) {
+							datasMsg.addAll(tmp);
+						}
+						msg_adapter.refreshDatas(datasMsg);
+					}
+
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						ToastMaker.showShortToast("数据返回失败");
+					}
+
+				});
 	}
 
 	@OnClick({ R.id.info_show_iv_back, R.id.msg_post_bt_context })

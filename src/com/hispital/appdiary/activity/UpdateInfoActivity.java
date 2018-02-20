@@ -70,14 +70,6 @@ public class UpdateInfoActivity extends BaseActivity {
 	@ViewInject(R.id.info_add_gv_images)
 	GridView info_add_gv_images;
 
-	// 留言内容
-	@ViewInject(R.id.msg_add_et_context)
-	EditText msg_add_et_context;
-
-	// 留言提交按钮
-	@ViewInject(R.id.msg_post_bt_context)
-	Button msg_post_bt_context;
-
 	// 留言列表
 	@ViewInject(R.id.msg_item_lv)
 	ListView msg_item_lv;
@@ -184,13 +176,9 @@ public class UpdateInfoActivity extends BaseActivity {
 		});
 
 		if (JStringKit.isEmpty(rid)) {
-			msg_post_bt_context.setVisibility(View.GONE);
-			msg_item_lv.setVisibility(View.GONE);
 			adapter.refreshDatas(datas);
 		} else {
 			loadInfoData();
-			msg_post_bt_context.setVisibility(View.VISIBLE);
-			msg_item_lv.setVisibility(View.VISIBLE);
 		}
 	}
 

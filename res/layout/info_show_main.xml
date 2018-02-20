@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:listSelector="@drawable/listview_item_bg"
         android:overScrollMode="never"
-        android:visibility="gone" >
+        android:visibility="visible" >
     </ListView>
 
 </LinearLayout>

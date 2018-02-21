@@ -41,6 +41,10 @@ public class ShowInfoActivity extends BaseActivity {
 	// 返回按钮
 	@ViewInject(R.id.info_show_iv_back)
 	ImageView info_show_iv_back;
+	
+	//页面标题
+	@ViewInject(R.id.info_title)
+	TextView info_title;
 
 	// 标题
 	@ViewInject(R.id.info_show_tv_title)
@@ -118,6 +122,7 @@ public class ShowInfoActivity extends BaseActivity {
 				NewsPictureActivity.startActivity(v.getContext(), position, imageJson);
 			}
 		});
+		info_title.setText("记录详情");
 		loadInfoData();
 		loadMsgData();
 	}

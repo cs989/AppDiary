@@ -47,12 +47,18 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class UpdateInfoActivity extends BaseActivity {
 
 	// 返回按钮
 	@ViewInject(R.id.info_add_iv_back)
 	ImageView info_add_iv_back;
+	
+	//页面标题
+	@ViewInject(R.id.info_title)
+	TextView info_title;
+	
 
 	// 保存按钮
 	@ViewInject(R.id.info_add_iv_save)
@@ -176,8 +182,10 @@ public class UpdateInfoActivity extends BaseActivity {
 		});
 
 		if (JStringKit.isEmpty(rid)) {
+			info_title.setText("新建记录");
 			adapter.refreshDatas(datas);
 		} else {
+			info_title.setText("编辑记录");
 			loadInfoData();
 		}
 	}

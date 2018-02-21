@@ -15,11 +15,23 @@
     <string name="find_str_focused">已关注</string>
     <string name="find_str_all">全部</string>
     <string name="find_str_add">+</string>
-    <!-- info add-->
+    <!-- info add -->
     <string name="info_add_str_add">请编写病人相关情况。。。</string>
     <string name="msg_add_str_add">留言。。。</string>
-    
-       <!-- info show-->
+
+    <!-- info show -->
     <string name="info_show_str">相关情况。。。</string>
+
+    <!-- focus -->
+    <string name="diary_focus_str_title">患者详情</string>
+
+    <!-- patient update -->
+    <string name="patient_str_no">请输入患者入院编号</string>
+    <string name="patient_str_name">请输入患者姓名</string>
+    <string name="patient_str_sex">请选择患者性别</string>
+    <string name="patient_str_pho">请选择患者联系方式</string>
+    <string name="patient_str_defalut_bir">默认2000-01-01</string>
+    <string name="patient_str_bir">请选择</string>
+    <string name="patient_str_content">病情介绍</string>
 
 </resources>

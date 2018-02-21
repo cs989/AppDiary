@@ -4,9 +4,75 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="关注" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/diary_focus_str_title"
+            android:textColor="#FF6000"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#F6F6F6"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/fragment_focus_find_llyt_switch"
+            android:layout_width="140dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/fragment_find_ic_left"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/fragment_focus_find_tv_focused"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/find_str_focused"
+                android:textColor="@color/find_cl_choose"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/fragment_focus_find_tv_all"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/find_str_all"
+                android:textColor="@color/find_cl_unchoose"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/fragment_find_focus_btn_add"
+            android:layout_width="70dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="60dp"
+            android:background="#F6F6F6"
+            android:clickable="false"
+            android:gravity="center"
+            android:text="@string/find_str_add"
+            android:textColor="#FF6000"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_focus_flyt_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </FrameLayout>
 
 </LinearLayout>

@@ -2,7 +2,7 @@ package com.hispital.appdiary.fragment;
 
 import com.hispital.appdiary.R;
 
-public class FindFocusedFragment extends BaseFragment {
+public class FocusFindFocusFragment extends BaseFragment {
 
 	@Override
 	protected int getLayoutId() {

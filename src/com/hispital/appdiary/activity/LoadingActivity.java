@@ -35,6 +35,8 @@ public class LoadingActivity extends BaseActivity {
 		return R.layout.loading_main;
 	}
 
+	String downLoadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/downloads/";
+
 	@Override
 	protected void initParams() {
 		// 透明度补间动画
@@ -61,6 +63,7 @@ public class LoadingActivity extends BaseActivity {
 						AppPreferences.instance().putString(PreferenceKey.START_VERSION,
 								VersionUtil.getAppVersionName());
 					} else {
+						deleteFile(downLoadPath + "Diary.apk");
 						MainActivity.startActivity(LoadingActivity.this);
 					}
 					finish();
@@ -79,6 +82,15 @@ public class LoadingActivity extends BaseActivity {
 		}
 	}
 
+	// 删除安装包
+	public boolean deleteFile(String filePath) {
+		File file = new File(filePath);
+		if (file.isFile() && file.exists()) {
+			return file.delete();
+		}
+		return false;
+	}
+
 	public void checkUpdate(Context context, int versionCode, String url, String updateMessage, boolean isForced) {
 		if (versionCode > UpdateManager.getInstance().getVersionCode(context)) {
 			int type = 0;// 更新方式，0：引导更新，1：安装更新，2：强制更新
@@ -90,7 +102,7 @@ public class LoadingActivity extends BaseActivity {
 			}
 
 			// 检测是否已下载
-			String downLoadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/downloads/";
+
 			File dir = new File(downLoadPath);
 			if (!dir.exists()) {
 				dir.mkdir();

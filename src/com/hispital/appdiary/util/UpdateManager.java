@@ -4,14 +4,14 @@ import java.io.File;
 
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.view.DialogMaker;
-import com.hispital.appdiary.view.ToastMaker;
 import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
+import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -113,47 +113,52 @@ public class UpdateManager {
 	 *
 	 */
 	public void downloadFile(final Context context) {
-		RequestParams params = new RequestParams(url);
+		// RequestParams params = new RequestParams();
 		// params.setSaveFilePath(downLoadPath + fileName);
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.GET, ConstantsUtil.SERVER_URL + "getApk", params,
-				new RequestCallBack<String>() {
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.GET, url, new RequestCallBack<String>() {
 
-					@Override
-					public void onFailure(HttpException arg0, String arg1) {
-						// 回送消息、
-						ToastMaker.showShortToast("下载失败");
-					}
+			@Override
+			public void onFailure(HttpException arg0, String arg1) {
+				// 回送消息、
+				ToastMaker.showShortToast("下载失败");
+				Activity activity = (Activity) context;
+				activity.finish();
+			}
 
-					@Override
-					public void onLoading(long total, long current, boolean isUploading) {
-						if (type == 0) {
-							notifyNotification(current, total);
-						} else if (type == 2) {
-							progressDialog.setProgress((int) (current * 100 / total));
-						}
-						if (total == current) {
-							if (type == 0) {
-								mBuilder.setContentText("下载完成");
-								// mNotifyManager.notify(10086,
-								// mBuilder.build());
-							} else if (type == 2) {
-								progressDialog.setMessage("下载完成");
-							}
-							if (type == 1) {
-								showDialog(context);
-							} else {
-								installApk(context, new File(downLoadPath, fileName));
-							}
-						}
+			@Override
+			public void onLoading(long total, long current, boolean isUploading) {
+				if (type == 0) {
+					notifyNotification(current, total);
+				} else if (type == 2) {
+					progressDialog.setProgress((int) (current * 100 / total));
+				}
+				if (total == current) {
+					if (type == 0) {
+						mBuilder.setContentText("下载完成");
+						// mNotifyManager.notify(10086,
+						// mBuilder.build());
+					} else if (type == 2) {
+						progressDialog.setMessage("下载完成");
 					}
+					if (type == 1) {
+						showDialog(context);
+					} else {
+						installApk(context, new File(downLoadPath, fileName));
+					}
+				}
+			}
 
-					@Override
-					public void onSuccess(ResponseInfo<String> arg0) {
-						// 回送消息
-						// ToastMaker.showShortToast("下载成功");
-						// finish();
-					}
-				});
+			@Override
+			public void onSuccess(ResponseInfo<String> arg0) {
+				ToastMaker.showShortToast("下载成功");
+				Activity activity = (Activity) context;
+				activity.finish();
+				installApk(context, new File(downLoadPath, fileName));
+				// 回送消息
+				// ToastMaker.showShortToast("下载成功");
+				// finish();
+			}
+		});
 
 		// x.http().request(HttpMethod.GET, params, new
 		// Callback.ProgressCallback<File>() {

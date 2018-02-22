@@ -21,6 +21,7 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -53,7 +55,7 @@ public class UpdatePatientActivity extends BaseActivity {
 
 	// 保存按钮
 	@ViewInject(R.id.patient_iv_save)
-	TextView patient_iv_save;
+	ImageView patient_iv_save;
 
 	// 头像
 	@ViewInject(R.id.patient_iv_img)
@@ -102,15 +104,18 @@ public class UpdatePatientActivity extends BaseActivity {
 	private Uri imageUri;
 	private String pid;
 
+	int mYear, mMonth, mDay;
+	final int DATE_DIALOG = 1;
+
 	// 静态方法启动创建activity
 	public static void startActivity(Context context) {
-		Intent intent = new Intent(context, UpdateInfoActivity.class);
+		Intent intent = new Intent(context, UpdatePatientActivity.class);
 		context.startActivity(intent);
 	}
 
 	// 静态方法启动修改activity
 	public static void startActivity(Context context, String pid, boolean isUpdate) {
-		Intent intent = new Intent(context, UpdateInfoActivity.class);
+		Intent intent = new Intent(context, UpdatePatientActivity.class);
 		intent.putExtra("pid", pid);
 		intent.putExtra("isUpdate", isUpdate);
 		context.startActivity(intent);
@@ -158,15 +163,24 @@ public class UpdatePatientActivity extends BaseActivity {
 	public void loadPatientData(PatientItem item) {
 		patient_et_no.setText(item.pno);
 		patient_et_name.setText(item.name);
-		if (item.sex == "男")
+		if (item.sex.equals("男"))
 			male_rb.setChecked(true);
 		else
 			famale_rb.setChecked(true);
 		patient_et_phone.setText(item.tel);
-		patient_tv_birthday.setText(item.birthday);
+		patient_tv_birthday.setText(item.birthday.substring(0, 11));
 		patient_et_context.setText(item.pcondition);
+
+		if(!item.purl.equals("")){
+			
+		patient_iv_img.setTag(ConstantsUtil.IMAGE_URL + item.purl);
 		AsyncImageLoader.getInstance(this).loadBitmaps(null, patient_iv_img, ConstantsUtil.IMAGE_URL + item.purl,
 				DisplayUtil.dip2px(this, 105), DisplayUtil.dip2px(this, 70));
+		}else {
+			//异步加载单张图片如果为空会报错，所以从资源文件中加载
+			Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.empty_photo);
+			patient_iv_img.setImageBitmap(bmp);
+		}
 
 	}
 
@@ -184,7 +198,8 @@ public class UpdatePatientActivity extends BaseActivity {
 						// JSONObject.parseObject(arg0.result).getString("list");
 						PatientItem tmp = JSONObject.parseObject(arg0.result, PatientItem.class);
 						if (tmp != null) {
-							loadPatientData(tmp);
+							datas = tmp;
+							loadPatientData(datas);
 						}
 					}
 
@@ -197,7 +212,7 @@ public class UpdatePatientActivity extends BaseActivity {
 				});
 	}
 
-	@OnClick({ R.id.patient_iv_back, R.id.patient_iv_save, R.id.patient_bt_birthday })
+	@OnClick({ R.id.patient_iv_back, R.id.patient_iv_save, R.id.patient_bt_birthday, R.id.patient_iv_img })
 	public void viewOnClick(View view) {
 		switch (view.getId()) {
 		// 后退
@@ -233,24 +248,37 @@ public class UpdatePatientActivity extends BaseActivity {
 			break;
 		// 留言提交
 		case R.id.patient_bt_birthday:
-
+			showDialog(DATE_DIALOG);
 			break;
-
+		case R.id.patient_iv_img:
+			AddImageDialog();
+			break;
 		default:
 			break;
 		}
 	}
 
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DATE_DIALOG:
+			return new DatePickerDialog(this, mdateListener, mYear, mMonth, mDay);
+		}
+		return null;
+	}
+
 	protected boolean updatePatient() {
 		RequestParams params = new RequestParams();
+		boolean isImage = false;
 		String netPath = "";
 		String httpmethod = "updatePatientByPid";
 		String path = datas.purl;
-		if (datas.purl.length() != 0)
-			netPath = datas.purl;
-		else {
+		if (datas.bmp != null) {
+			isImage = true;
 			httpmethod = "updategPatientByPidImage";
 			params.addBodyParameter("file0", new File(datas.purl));
+		} else {
+			netPath = datas.purl;
 		}
 
 		if (male_rb.isChecked())
@@ -259,38 +287,42 @@ public class UpdatePatientActivity extends BaseActivity {
 			datas.sex = "女";
 		if (JStringKit.isNotEmpty(pid)) {
 			params.addBodyParameter("pid", pid + "");
-
-			params.addBodyParameter("pno", patient_et_no.getText().toString());
-			params.addBodyParameter("name", patient_et_name.getText().toString());
-			params.addBodyParameter("sex", datas.sex);
-			params.addBodyParameter("tel", patient_et_phone.getText().toString());
-			params.addBodyParameter("birthday", patient_tv_birthday.getText().toString());
-			params.addBodyParameter("pcondition", patient_et_context.getText().toString());
-
-			params.addBodyParameter("purl", netPath);
-
-			LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + httpmethod,
-					params, new RequestCallBack<String>() {
-
-						@Override
-						public void onFailure(HttpException arg0, String arg1) {
-							// 回送消息、
-							ToastMaker.showShortToast("上传失败");
-						}
-
-						@Override
-						public void onLoading(long total, long current, boolean isUploading) {
-							super.onLoading(total, current, isUploading);
-						}
-
-						@Override
-						public void onSuccess(ResponseInfo<String> arg0) {
-							// 回送消息
-							ToastMaker.showShortToast("上传成功");
-							finish();
-						}
-					});
+		} else {
+			if (isImage)
+				httpmethod = "creategPatientImage";
+			else
+				httpmethod = "creategPatient";
 		}
+		params.addBodyParameter("pno", patient_et_no.getText().toString());
+		params.addBodyParameter("name", patient_et_name.getText().toString());
+		params.addBodyParameter("sex", datas.sex);
+		params.addBodyParameter("tel", patient_et_phone.getText().toString());
+		params.addBodyParameter("birthday", patient_tv_birthday.getText().toString());
+		params.addBodyParameter("pcondition", patient_et_context.getText().toString());
+
+		params.addBodyParameter("purl", netPath);
+
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + httpmethod, params,
+				new RequestCallBack<String>() {
+
+					@Override
+					public void onFailure(HttpException arg0, String arg1) {
+						// 回送消息、
+						ToastMaker.showShortToast("上传失败");
+					}
+
+					@Override
+					public void onLoading(long total, long current, boolean isUploading) {
+						super.onLoading(total, current, isUploading);
+					}
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						// 回送消息
+						ToastMaker.showShortToast("上传成功");
+						finish();
+					}
+				});
 
 		return false;
 	}
@@ -386,10 +418,29 @@ public class UpdatePatientActivity extends BaseActivity {
 		super.onResume();
 		if (!TextUtils.isEmpty(pathImage)) {
 			Bitmap addbmp = BitmapFactory.decodeFile(pathImage);
+			patient_iv_img.setImageBitmap(addbmp);
 			datas.bmp = addbmp;
 			datas.purl = pathImage;
 			pathImage = null;
 		}
 	}
 
+	/**
+	 * 设置日期 利用StringBuffer追加
+	 */
+	public void display() {
+		patient_tv_birthday
+				.setText(new StringBuffer().append(mYear).append("-").append(mMonth + 1).append("-").append(mDay));
+	}
+
+	private DatePickerDialog.OnDateSetListener mdateListener = new DatePickerDialog.OnDateSetListener() {
+
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+			display();
+		}
+	};
 }

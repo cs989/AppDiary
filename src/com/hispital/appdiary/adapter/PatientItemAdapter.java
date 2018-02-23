@@ -55,6 +55,7 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 
 		final int ption = position;
 		final int pid = datas.get(position).pid;
+		final int uid = datas.get(position).uid;
 		entityHolder.main_tv_delete.setTag(datas.get(position).pid);
 		entityHolder.main_tv_delete.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -72,20 +73,20 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 									ConstantsUtil.SERVER_URL + "deletePatientByPid", params,
 									new RequestCallBack<String>() {
 
-										@Override
-										public void onSuccess(ResponseInfo<String> arg0) {
-											datas.remove(datas.get(ption));
-											notifyDataSetChanged();
-											listView.turnToNormal();
-										}
+								@Override
+								public void onSuccess(ResponseInfo<String> arg0) {
+									datas.remove(datas.get(ption));
+									notifyDataSetChanged();
+									listView.turnToNormal();
+								}
 
-										@Override
-										public void onFailure(HttpException error, String msg) {
-											// TODO Auto-generated method stub
-											ToastMaker.showShortToast("数据返回失败");
-										}
+								@Override
+								public void onFailure(HttpException error, String msg) {
+									// TODO Auto-generated method stub
+									ToastMaker.showShortToast("数据返回失败");
+								}
 
-									});
+							});
 							break;
 						case 1:
 							dialog.dismiss();
@@ -116,6 +117,9 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 				listView.turnToNormal();
 			}
 		});
+		
+		
+		//entityHolder.patient_focus_iv_img.setImageBitmap(bm);
 
 		entityHolder.patient_item_tv_content.setText(datas.get(position).pcondition);
 		entityHolder.item_tv_time
@@ -140,23 +144,25 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				RequestParams params = new RequestParams();
-				// params.addBodyParameter("uid", uid);
-				// params.addBodyParameter("pid", pid);
-				LocalApplication.getInstance().httpUtils.send(HttpMethod.POST,
-						ConstantsUtil.SERVER_URL + "getPatientByPid", params, new RequestCallBack<String>() {
+				params.addBodyParameter("uid", uid + "");
+				params.addBodyParameter("pid", pid + "");
+				params.addBodyParameter("isCreate", "false");
+				LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "updateFocus",
+						params, new RequestCallBack<String>() {
 
-							@Override
-							public void onSuccess(ResponseInfo<String> arg0) {
-								// datas.get(ption).
-							}
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						// 局部更形关注图片图片
+						notifyDataSetChanged(listView, ption);
+					}
 
-							@Override
-							public void onFailure(HttpException error, String msg) {
-								// TODO Auto-generated method stub
-								ToastMaker.showShortToast("数据返回失败");
-							}
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						// TODO Auto-generated method stub
+						ToastMaker.showShortToast("数据返回失败");
+					}
 
-						});
+				});
 			}
 		});
 

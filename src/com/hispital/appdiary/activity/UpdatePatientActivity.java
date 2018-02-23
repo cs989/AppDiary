@@ -155,7 +155,7 @@ public class UpdatePatientActivity extends BaseActivity {
 				patient_bt_birthday.setVisibility(View.GONE);
 				patient_iv_save.setVisibility(View.GONE);
 				patient_title.setText("查看");
-				loadPatientData(datas);
+				loadPatientDataFromNet();
 			}
 		}
 	}

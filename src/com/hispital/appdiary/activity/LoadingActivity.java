@@ -6,8 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.VersionInfo;
-import com.hispital.appdiary.util.AppPreferences;
-import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.UpdateManager;
 import com.hispital.appdiary.util.VersionUtil;
@@ -18,7 +16,6 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
-import android.content.ClipData.Item;
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -67,35 +64,36 @@ public class LoadingActivity extends BaseActivity {
 					LocalApplication.getInstance().httpUtils.send(HttpMethod.GET,
 							ConstantsUtil.SERVER_URL + "getVersionCode", new RequestCallBack<String>() {
 
-						@Override
-						public void onFailure(HttpException arg0, String arg1) {
-							// 回送消息、
-							ToastMaker.showShortToast("请求网络失败");
-						}
+								@Override
+								public void onFailure(HttpException arg0, String arg1) {
+									// 回送消息、
+									ToastMaker.showShortToast("请求网络失败");
+								}
 
-						@Override
-						public void onLoading(long total, long current, boolean isUploading) {
-							super.onLoading(total, current, isUploading);
-						}
+								@Override
+								public void onLoading(long total, long current, boolean isUploading) {
+									super.onLoading(total, current, isUploading);
+								}
 
-						@Override
-						public void onSuccess(ResponseInfo<String> arg0) {
-							// 回送消息
-							VersionInfo tmp = JSONObject.parseObject(arg0.result, VersionInfo.class);
-							if (VersionUtil.getAppVersionName().equals(tmp.versionname)) {
-								deleteFile(downLoadPath + tmp.appname + ".apk");
-								MainActivity.startActivity(LoadingActivity.this);
-								finish();
-							} else {
-								checkUpdate(LoadingActivity.this, 0,
-										ConstantsUtil.IMAGE_URL + "apk/" + tmp.appname + ".apk", "更新了\n修复", true);
-							}
+								@Override
+								public void onSuccess(ResponseInfo<String> arg0) {
+									// 回送消息
+									VersionInfo tmp = JSONObject.parseObject(arg0.result, VersionInfo.class);
+									if (VersionUtil.getAppVersionName().equals(tmp.versionname)) {
+										deleteFile(downLoadPath + tmp.appname + ".apk");
+										MainActivity.startActivity(LoadingActivity.this);
+										finish();
+									} else {
+										checkUpdate(LoadingActivity.this, 0,
+												ConstantsUtil.IMAGE_URL + "apk/" + tmp.appname + ".apk", "更新了\n修复",
+												true);
+									}
 
-							// String start_version =
-							// AppPreferences.instance().getString(PreferenceKey.START_VERSION);
+									// String start_version =
+									// AppPreferences.instance().getString(PreferenceKey.START_VERSION);
 
-						}
-					});
+								}
+							});
 
 					// if
 					// (!start_version.equals(VersionUtil.getAppVersionName()))

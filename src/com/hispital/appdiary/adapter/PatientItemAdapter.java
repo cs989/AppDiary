@@ -3,20 +3,17 @@ package com.hispital.appdiary.adapter;
 import java.util.List;
 
 import com.hispital.appdiary.R;
-import com.hispital.appdiary.activity.ShowInfoActivity;
-import com.hispital.appdiary.activity.UpdateInfoActivity;
 import com.hispital.appdiary.activity.UpdatePatientActivity;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.cache.AsyncImageLoader;
-import com.hispital.appdiary.entity.InfoItem;
 import com.hispital.appdiary.entity.PatientItem;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
 import com.hispital.appdiary.util.JStringKit;
 import com.hispital.appdiary.view.DialogMaker;
+import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.hispital.appdiary.view.SlideListView;
 import com.hispital.appdiary.view.ToastMaker;
-import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -29,10 +26,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 	private SlideListView listView;
@@ -74,22 +69,23 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 							RequestParams params = new RequestParams();
 							params.addBodyParameter("pid", pid + "");
 							LocalApplication.getInstance().httpUtils.send(HttpMethod.POST,
-									ConstantsUtil.SERVER_URL + "deletePatientByRid", params, new RequestCallBack<String>() {
+									ConstantsUtil.SERVER_URL + "deletePatientByPid", params,
+									new RequestCallBack<String>() {
 
-								@Override
-								public void onSuccess(ResponseInfo<String> arg0) {
-									datas.remove(datas.get(ption));
-									notifyDataSetChanged();
-									listView.turnToNormal();
-								}
+										@Override
+										public void onSuccess(ResponseInfo<String> arg0) {
+											datas.remove(datas.get(ption));
+											notifyDataSetChanged();
+											listView.turnToNormal();
+										}
 
-								@Override
-								public void onFailure(HttpException error, String msg) {
-									// TODO Auto-generated method stub
-									ToastMaker.showShortToast("数据返回失败");
-								}
+										@Override
+										public void onFailure(HttpException error, String msg) {
+											// TODO Auto-generated method stub
+											ToastMaker.showShortToast("数据返回失败");
+										}
 
-							});
+									});
 							break;
 						case 1:
 							dialog.dismiss();
@@ -131,11 +127,36 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 				ConstantsUtil.IMAGE_URL + datas.get(position).purl, DisplayUtil.dip2px(c, 105),
 				DisplayUtil.dip2px(c, 70));
 
-		listView.setOnItemClickListener(new OnItemClickListener() {
+		// 调制到现实页面
+		entityHolder.patient_item_iv_img.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				// ShowInfoActivity.startActivity(v.getContext(),
-				// datas.get(position).rid + "");
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				UpdatePatientActivity.startActivity(v.getContext(), datas.get(ption).pid + "", false);
+			}
+		});
+		entityHolder.patient_focus_iv_img.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				RequestParams params = new RequestParams();
+				// params.addBodyParameter("uid", uid);
+				// params.addBodyParameter("pid", pid);
+				LocalApplication.getInstance().httpUtils.send(HttpMethod.POST,
+						ConstantsUtil.SERVER_URL + "getPatientByPid", params, new RequestCallBack<String>() {
+
+							@Override
+							public void onSuccess(ResponseInfo<String> arg0) {
+								// datas.get(ption).
+							}
+
+							@Override
+							public void onFailure(HttpException error, String msg) {
+								// TODO Auto-generated method stub
+								ToastMaker.showShortToast("数据返回失败");
+							}
+
+						});
 			}
 		});
 

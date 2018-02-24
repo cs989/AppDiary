@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.InfoItem;
+import com.hispital.appdiary.entity.UserItem;
+import com.hispital.appdiary.util.AppPreferences;
 import com.hispital.appdiary.util.ConstantsUtil;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -21,6 +24,8 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -56,6 +61,11 @@ public class LoginActivity extends BaseActivity {
 
 	private float mWidth, mHeight;
 
+	public static void startActivity(Context context) {
+		Intent intent = new Intent(context, LoginActivity.class);
+		context.startActivity(intent);
+	}
+
 	@Override
 	protected int getLayoutId() {
 
@@ -73,7 +83,7 @@ public class LoginActivity extends BaseActivity {
 		switch (view.getId()) {
 		// 登录
 		case R.id.main_btn_login:
-			if (input_et_username.getText().equals("") && input_et_psw.getText().equals("")) {
+			if (input_et_username.getText().toString().equals("") || input_et_psw.getText().toString().equals("")) {
 				ToastMaker.showShortToast("用户名或密码不能为空");
 			} else {
 				// 计算出控件的高与宽
@@ -84,19 +94,30 @@ public class LoginActivity extends BaseActivity {
 				input_layout_psw.setVisibility(View.INVISIBLE);
 				inputAnimator(input_layout, mWidth, mHeight);
 				RequestParams params = new RequestParams();
-				params.addBodyParameter("username", input_et_username.getText() + "");
-				params.addBodyParameter("password", input_et_psw.getText() + "");
-				LocalApplication.getInstance().httpUtils.send(HttpMethod.POST,
-						ConstantsUtil.SERVER_URL + "getRecordByRid", params, new RequestCallBack<String>() {
+				params.addBodyParameter("username", input_et_username.getText().toString());
+				params.addBodyParameter("password", input_et_psw.getText().toString());
+				LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "loginCheck",
+						params, new RequestCallBack<String>() {
 
 							@Override
 							public void onSuccess(ResponseInfo<String> arg0) {
-								// String list =
-								// JSONObject.parseObject(arg0.result).getString("list");
-								InfoItem tmp = JSONObject.parseObject(arg0.result, InfoItem.class);
+								UserItem tmp = null;
+								try {
+									tmp = JSONObject.parseObject(arg0.result, UserItem.class);
+								} catch (Exception ex) {
+
+								}
 								if (tmp != null) {
-									// info_add_et_title.setText(tmp.title);
-									// info_add_et_context.setText(tmp.content);
+									AppPreferences.instance().remove(PreferenceKey.USER_ID);
+									AppPreferences.instance().remove(PreferenceKey.PRO_ID);
+									AppPreferences.instance().putString(PreferenceKey.USER_ID, tmp.uid + "");
+									AppPreferences.instance().putString(PreferenceKey.PRO_ID, tmp.pid + "");
+									MainActivity.startActivity(LoginActivity.this);
+									finish();
+								} else {
+
+									ToastMaker.showShortToast("用户名或密码错误");
+									recovery();
 								}
 							}
 
@@ -179,6 +200,23 @@ public class LoginActivity extends BaseActivity {
 		animator3.setInterpolator(new JellyInterpolator());
 		animator3.start();
 
+	}
+
+	private void recovery() {
+		layout_progress.setVisibility(View.GONE);
+		input_layout.setVisibility(View.VISIBLE);
+		input_layout_name.setVisibility(View.VISIBLE);
+		input_layout_psw.setVisibility(View.VISIBLE);
+
+		ViewGroup.MarginLayoutParams params = (MarginLayoutParams) input_layout.getLayoutParams();
+		params.leftMargin = 0;
+		params.rightMargin = 0;
+		input_layout.setLayoutParams(params);
+
+		ObjectAnimator animator2 = ObjectAnimator.ofFloat(input_layout, "scaleX", 0.5f, 1f);
+		animator2.setDuration(500);
+		animator2.setInterpolator(new AccelerateDecelerateInterpolator());
+		animator2.start();
 	}
 
 	class JellyInterpolator extends LinearInterpolator {

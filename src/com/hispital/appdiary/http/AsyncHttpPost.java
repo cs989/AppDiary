@@ -41,7 +41,9 @@ public class AsyncHttpPost
 	}
 
 	// 登录验证
-	public void loginCheck()
+	public void loginCheck(){
+		
+	}
 	{
 		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, url, params, new RequestCallBack<String>()
 		{

@@ -21,7 +21,10 @@ public class AppPreferences
 	public static class PreferenceKey
 	{
 		public static final String START_VERSION = "start_version";
+		public static final String USER_ID = "user_id";
+		public static final String PRO_ID = "pro_id";
 	}
+	
 
 	private static AppPreferences appPreferences;
 	private SharedPreferences preferences;

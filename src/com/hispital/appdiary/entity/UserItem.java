@@ -1,5 +1,7 @@
 package com.hispital.appdiary.entity;
 
+import android.graphics.Bitmap;
+
 public class UserItem {
 	public int uid;
 
@@ -22,4 +24,6 @@ public class UserItem {
 	public String password;
 
 	public String uurl;
+	
+	public Bitmap bmp;
 }

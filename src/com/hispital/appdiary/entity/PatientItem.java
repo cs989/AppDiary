@@ -28,4 +28,6 @@ public class PatientItem {
 	// 创建时间
 	public Bitmap bmp;
 
+	public int userid;
+
 }

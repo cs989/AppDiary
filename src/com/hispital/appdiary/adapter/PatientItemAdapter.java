@@ -7,6 +7,8 @@ import com.hispital.appdiary.activity.UpdatePatientActivity;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.cache.AsyncImageLoader;
 import com.hispital.appdiary.entity.PatientItem;
+import com.hispital.appdiary.util.AppPreferences;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
 import com.hispital.appdiary.util.JStringKit;
@@ -24,6 +26,9 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,6 +36,7 @@ import android.widget.TextView;
 
 public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 	private SlideListView listView;
+	final private String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
 
 	public PatientItemAdapter(Context c, List<PatientItem> datas, SlideListView listView) {
 		super(c, datas);
@@ -55,7 +61,6 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 
 		final int ption = position;
 		final int pid = datas.get(position).pid;
-		final int uid = datas.get(position).uid;
 		entityHolder.main_tv_delete.setTag(datas.get(position).pid);
 		entityHolder.main_tv_delete.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -117,9 +122,8 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 				listView.turnToNormal();
 			}
 		});
-		
-		
-		//entityHolder.patient_focus_iv_img.setImageBitmap(bm);
+
+		// entityHolder.patient_focus_iv_img.setImageBitmap(bm);
 
 		entityHolder.patient_item_tv_content.setText(datas.get(position).pcondition);
 		entityHolder.item_tv_time
@@ -139,20 +143,36 @@ public class PatientItemAdapter extends SimpleBaseAdapter<PatientItem> {
 				UpdatePatientActivity.startActivity(v.getContext(), datas.get(ption).pid + "", false);
 			}
 		});
+		Bitmap bmp = null;
+		boolean temp = false;
+		if (datas.get(position).userid == 0) {
+			bmp = BitmapFactory.decodeResource(listView.getResources(), R.drawable.focus_unchoose);
+			temp = true;
+		} else {
+			bmp = BitmapFactory.decodeResource(listView.getResources(), R.drawable.focus_choose);
+			temp = false;
+		}
+		final boolean iscreate = temp;
+		entityHolder.patient_focus_iv_img.setImageBitmap(bmp);
 		entityHolder.patient_focus_iv_img.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				RequestParams params = new RequestParams();
-				params.addBodyParameter("uid", uid + "");
+				params.addBodyParameter("uid", uid);
 				params.addBodyParameter("pid", pid + "");
-				params.addBodyParameter("isCreate", "false");
+				params.addBodyParameter("isCreate", iscreate + "");
 				LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "updateFocus",
 						params, new RequestCallBack<String>() {
 
 					@Override
 					public void onSuccess(ResponseInfo<String> arg0) {
 						// 局部更形关注图片图片
+						if (iscreate) {
+							datas.get(ption).userid = Integer.valueOf(uid).intValue();
+						} else {
+							datas.get(ption).userid = 0;
+						}
 						notifyDataSetChanged(listView, ption);
 					}
 

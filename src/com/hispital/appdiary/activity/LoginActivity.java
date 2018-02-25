@@ -32,6 +32,7 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,6 +60,12 @@ public class LoginActivity extends BaseActivity {
 	@ViewInject(R.id.input_et_psw)
 	EditText input_et_psw;
 
+	@ViewInject(R.id.login_iv_exit)
+	ImageView login_iv_exit;
+
+	@ViewInject(R.id.login_tv_register)
+	TextView login_tv_register;
+
 	private float mWidth, mHeight;
 
 	public static void startActivity(Context context) {
@@ -78,7 +85,7 @@ public class LoginActivity extends BaseActivity {
 
 	}
 
-	@OnClick({ R.id.main_btn_login })
+	@OnClick({ R.id.main_btn_login, R.id.login_tv_register, R.id.login_iv_exit })
 	public void viewOnClick(View view) {
 		switch (view.getId()) {
 		// 登录
@@ -128,6 +135,12 @@ public class LoginActivity extends BaseActivity {
 							}
 						});
 			}
+			break;
+		case R.id.login_tv_register:
+			RegisterActivity.startActivity(this);
+			break;
+		case R.id.login_iv_exit:
+			this.finish();
 			break;
 		default:
 			break;

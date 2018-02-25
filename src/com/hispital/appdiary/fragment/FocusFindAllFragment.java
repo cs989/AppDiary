@@ -7,9 +7,11 @@ import com.hispital.appdiary.R;
 import com.hispital.appdiary.adapter.PatientItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.PatientItem;
+import com.hispital.appdiary.util.AppPreferences;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
 import com.hispital.appdiary.util.JListKit;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.view.ProgressWheel;
 import com.hispital.appdiary.view.SlideListView;
 import com.hispital.appdiary.view.ToastMaker;
@@ -59,6 +61,7 @@ public class FocusFindAllFragment extends BaseFragment {
 
 	private int pageIndex = 0;
 	private int pageSize = 10;
+	private String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
 
 	@Override
 	protected int getLayoutId() {
@@ -130,6 +133,7 @@ public class FocusFindAllFragment extends BaseFragment {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("pageIndex", pageIndex + "");
 		params.addBodyParameter("pageSize", pageSize + "");
+		params.addBodyParameter("uid",uid);
 		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getPatientList",
 				params, new RequestCallBack<String>() {
 

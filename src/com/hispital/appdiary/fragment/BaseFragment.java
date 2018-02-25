@@ -25,6 +25,12 @@ public abstract class BaseFragment extends Fragment
 	private View mView;
 
 	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+
+	@Override
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ICU护理</string>
+    <string name="app_name">ICU日记</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <!-- main -->
-    <string name="diary_str_info">记录</string>
+    <string name="diary_str_info">日记</string>
     <string name="diary_str_focus">关注</string>
     <string name="diary_str_self">我的</string>
 
     <!-- info -->
-    <string name="diary_str_title">ICU记录</string>
+    <string name="diary_str_title">ICU日记</string>
     <string name="find_str_focused">已关注</string>
     <string name="find_str_all">全部</string>
     <string name="find_str_add">+</string>
@@ -23,7 +23,7 @@
     <string name="info_show_str">相关情况。。。</string>
 
     <!-- focus -->
-    <string name="diary_focus_str_title">患者详情</string>
+    <string name="diary_focus_str_title">关注详情</string>
 
     <!-- patient update -->
     <string name="patient_str_no">请输入患者入院编号</string>

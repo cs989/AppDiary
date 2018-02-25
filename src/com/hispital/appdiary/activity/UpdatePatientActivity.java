@@ -7,6 +7,8 @@ import com.hispital.appdiary.R;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.cache.AsyncImageLoader;
 import com.hispital.appdiary.entity.PatientItem;
+import com.hispital.appdiary.util.AppPreferences;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.DisplayUtil;
 import com.hispital.appdiary.util.JStringKit;
@@ -32,6 +34,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.Preference;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
@@ -98,13 +101,14 @@ public class UpdatePatientActivity extends BaseActivity {
 	private final int TAKE_PHOTO = 3;
 	private String pathImage;
 	private boolean isUpdate = false;
+	private String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
 
 	PatientItem datas = new PatientItem();
 
 	private Uri imageUri;
 	private String pid;
 
-	int mYear, mMonth, mDay;
+	int mYear = 1980, mMonth = 0, mDay = 1;
 	final int DATE_DIALOG = 1;
 
 	// 静态方法启动创建activity
@@ -145,19 +149,33 @@ public class UpdatePatientActivity extends BaseActivity {
 			patient_bt_birthday.setVisibility(View.VISIBLE);
 			patient_iv_save.setVisibility(View.VISIBLE);
 			patient_title.setText("新建");
+			etIsWrite(true);
 		} else {
 			if (isUpdate) {
 				patient_bt_birthday.setVisibility(View.VISIBLE);
 				patient_iv_save.setVisibility(View.VISIBLE);
 				patient_title.setText("编辑");
+				etIsWrite(true);
 				loadPatientDataFromNet();
 			} else {
 				patient_bt_birthday.setVisibility(View.GONE);
 				patient_iv_save.setVisibility(View.GONE);
 				patient_title.setText("查看");
+				etIsWrite(false);
 				loadPatientDataFromNet();
 			}
 		}
+	}
+
+	public void etIsWrite(boolean isWrite) {
+		patient_et_name.setFocusable(isWrite);
+		patient_et_phone.setFocusable(isWrite);
+		patient_et_no.setFocusable(isWrite);
+		patient_et_context.setFocusable(isWrite);
+		patient_et_name.setFocusableInTouchMode(isWrite);
+		patient_et_phone.setFocusableInTouchMode(isWrite);
+		patient_et_no.setFocusableInTouchMode(isWrite);
+		patient_et_context.setFocusableInTouchMode(isWrite);
 	}
 
 	public void loadPatientData(PatientItem item) {
@@ -171,13 +189,13 @@ public class UpdatePatientActivity extends BaseActivity {
 		patient_tv_birthday.setText(item.birthday.substring(0, 11));
 		patient_et_context.setText(item.pcondition);
 
-		if(!item.purl.equals("")){
-			
-		patient_iv_img.setTag(ConstantsUtil.IMAGE_URL + item.purl);
-		AsyncImageLoader.getInstance(this).loadBitmaps(null, patient_iv_img, ConstantsUtil.IMAGE_URL + item.purl,
-				DisplayUtil.dip2px(this, 105), DisplayUtil.dip2px(this, 70));
-		}else {
-			//异步加载单张图片如果为空会报错，所以从资源文件中加载
+		if (!(item.purl == null || item.purl.equals(""))) {
+
+			patient_iv_img.setTag(ConstantsUtil.IMAGE_URL + item.purl);
+			AsyncImageLoader.getInstance(this).loadBitmaps(null, patient_iv_img, ConstantsUtil.IMAGE_URL + item.purl,
+					DisplayUtil.dip2px(this, 105), DisplayUtil.dip2px(this, 70));
+		} else {
+			// 异步加载单张图片如果为空会报错，所以从资源文件中加载
 			Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.empty_photo);
 			patient_iv_img.setImageBitmap(bmp);
 		}
@@ -187,6 +205,7 @@ public class UpdatePatientActivity extends BaseActivity {
 	public void loadPatientDataFromNet() {
 
 		RequestParams params = new RequestParams();
+		// params.addBodyParameter("uid", uid);
 		params.addBodyParameter("pid", pid);
 		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getPatientByPid",
 				params, new RequestCallBack<String>() {

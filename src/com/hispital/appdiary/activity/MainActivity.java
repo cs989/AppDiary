@@ -4,6 +4,7 @@ import com.hispital.appdiary.R;
 import com.hispital.appdiary.fragment.FocusFragment;
 import com.hispital.appdiary.fragment.InfoFragment;
 import com.hispital.appdiary.fragment.SelfFragment;
+import com.hispital.appdiary.util.AppPreferences;
 import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
@@ -189,7 +190,11 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void initParams() {
 		// TODO Auto-generated method stub
-
+		if (AppPreferences.instance().getString(AppPreferences.PreferenceKey.PRO_ID).equals("3")) {
+			diary_llyt_focus.setVisibility(View.GONE);
+		} else {
+			diary_llyt_focus.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override

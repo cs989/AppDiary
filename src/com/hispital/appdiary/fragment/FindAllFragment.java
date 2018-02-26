@@ -133,6 +133,7 @@ public class FindAllFragment extends BaseFragment {
 		params.addBodyParameter("pageIndex", pageIndex + "");
 		params.addBodyParameter("pageSize", pageSize + "");
 		params.addBodyParameter("uid", AppPreferences.instance().getString(PreferenceKey.USER_ID));
+		params.addBodyParameter("pro_id", AppPreferences.instance().getString(PreferenceKey.PRO_ID));
 		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "getRecordList",
 				params, new RequestCallBack<String>() {
 
@@ -149,9 +150,11 @@ public class FindAllFragment extends BaseFragment {
 
 					@Override
 					public void onSuccess(ResponseInfo<String> arg0) {
-						String list = JSONObject.parseObject(arg0.result).getString("list");
-						List<InfoItem> tmp = JSONObject.parseArray(list, InfoItem.class);
-
+						List<InfoItem> tmp = null;
+						if (!arg0.result.equals("")) {
+							String list = JSONObject.parseObject(arg0.result).getString("list");
+							tmp = JSONObject.parseArray(list, InfoItem.class);
+						}
 						pw.stopSpinning();
 						pw.setVisibility(View.GONE);
 						info_diary_lv.setVisibility(View.VISIBLE);

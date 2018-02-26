@@ -1,6 +1,5 @@
 package com.hispital.appdiary.view;
 
-import com.hispital.appdiary.util.DisplayUtil;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -77,12 +76,14 @@ public class SlideListView extends ListView {
 		if (mPointChild != null) {
 			mMenuWidth = mPointChild.getChildAt(1).getLayoutParams().width;
 			mLayoutParams = (LinearLayout.LayoutParams) mPointChild.getChildAt(0).getLayoutParams();
-			mLayoutParams.width = mScreenWidth- 10;
+			mLayoutParams.width = mScreenWidth - 10;
 			setChildLayoutParams();
 		}
 	}
 
 	private boolean performActionMove(MotionEvent ev) {
+		if(mLayoutParams==null)
+			return false;
 		int nowX = (int) ev.getX();
 		int nowY = (int) ev.getY();
 		// if (isMoving) {
@@ -122,6 +123,9 @@ public class SlideListView extends ListView {
 	}
 
 	private void performActionUp() {
+		if (mPointChild == null) {
+			return;
+		}
 		// 超过一半时，显示菜单，否则隐藏
 		if (-mLayoutParams.leftMargin >= mMenuWidth / 2) {
 			mLayoutParams.leftMargin = -mMenuWidth;

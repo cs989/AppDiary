@@ -66,6 +66,20 @@
         </LinearLayout>
     </LinearLayout>
 
+    <include
+        android:id="@+id/info_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/patient_search" />
+
+    <TextView
+        android:id="@+id/search_pid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
     <EditText
         android:id="@+id/info_add_et_title"
         android:layout_width="fill_parent"

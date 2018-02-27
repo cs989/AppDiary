@@ -6,14 +6,16 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.adapter.ImageItemAdapter;
+import com.hispital.appdiary.adapter.SearchPatientItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.ImageItem;
 import com.hispital.appdiary.entity.InfoItem;
+import com.hispital.appdiary.entity.PatientItem;
 import com.hispital.appdiary.util.AppPreferences;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.JListKit;
 import com.hispital.appdiary.util.JStringKit;
-import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.view.DialogMaker;
 import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.hispital.appdiary.view.ToastMaker;
@@ -39,17 +41,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class UpdateInfoActivity extends BaseActivity {
 
@@ -81,6 +86,18 @@ public class UpdateInfoActivity extends BaseActivity {
 	@ViewInject(R.id.msg_item_lv)
 	ListView msg_item_lv;
 
+	// 查询模块
+	@ViewInject(R.id.search_llyt_patient)
+	LinearLayout search_llyt_patient;
+	@ViewInject(R.id.search_et_context)
+	EditText search_et_context;
+	@ViewInject(R.id.search_iv_delete)
+	ImageView search_iv_delete;
+	@ViewInject(R.id.search_lv_patient)
+	ListView search_lv_patient;
+	@ViewInject(R.id.search_pid)
+	TextView search_pid;
+
 	private final int IMAGE_OPEN = 1;
 	private final int GET_DATA = 2;
 	private final int TAKE_PHOTO = 3;
@@ -90,6 +107,8 @@ public class UpdateInfoActivity extends BaseActivity {
 
 	List<ImageItem> datas = JListKit.newArrayList();
 
+	List<PatientItem> searchdatas = JListKit.newArrayList();
+
 	private Uri imageUri;
 	private Bitmap bmp;
 
@@ -97,6 +116,8 @@ public class UpdateInfoActivity extends BaseActivity {
 
 	// 适配器
 	private ImageItemAdapter adapter;
+
+	private SearchPatientItemAdapter searadapter;
 
 	private String rid;
 
@@ -185,9 +206,51 @@ public class UpdateInfoActivity extends BaseActivity {
 		});
 
 		if (JStringKit.isEmpty(rid)) {
+			if (pro_id.equals("3"))
+				search_llyt_patient.setVisibility(View.GONE);
+			else {
+				search_llyt_patient.setVisibility(View.VISIBLE);
+				// EditText添加监听
+				searadapter = new SearchPatientItemAdapter(this, searchdatas, search_lv_patient);
+				search_lv_patient.setAdapter(searadapter);
+				search_lv_patient.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+						search_et_context.setText(searchdatas.get(position).name);
+						search_pid.setText(searchdatas.get(position).pid + "");
+						search_lv_patient.setVisibility(View.GONE);
+					}
+				});
+
+				search_et_context.addTextChangedListener(new TextWatcher() {
+
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}// 文本改变之前执行
+
+					@Override
+					// 文本改变的时候执行
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						// 如果长度为0
+						if (s.length() == 0) {
+							// 隐藏“删除”图片
+							search_iv_delete.setVisibility(View.GONE);
+						} else {// 长度不为0
+							// 显示“删除图片”
+							search_iv_delete.setVisibility(View.VISIBLE);
+							// 显示ListView
+							showSearchListView();
+						}
+					}
+
+					public void afterTextChanged(Editable s) {
+					}// 文本改变之后执行
+				});
+
+			}
 			info_title.setText("新建记录");
 			adapter.refreshDatas(datas);
 		} else {
+			search_llyt_patient.setVisibility(View.GONE);
 			info_title.setText("编辑记录");
 			loadInfoData();
 		}
@@ -243,7 +306,7 @@ public class UpdateInfoActivity extends BaseActivity {
 
 	}
 
-	@OnClick({ R.id.info_add_iv_back, R.id.info_add_iv_save, R.id.msg_post_bt_context })
+	@OnClick({ R.id.info_add_iv_back, R.id.info_add_iv_save, R.id.msg_post_bt_context, R.id.search_iv_delete })
 	public void viewOnClick(View view) {
 		switch (view.getId()) {
 		// 后退
@@ -259,7 +322,6 @@ public class UpdateInfoActivity extends BaseActivity {
 					switch (position) {
 					case 0:
 						updateImage();
-						ToastMaker.showShortToast("正在上传");
 						break;
 					case 1:
 						dialog.dismiss();
@@ -281,18 +343,69 @@ public class UpdateInfoActivity extends BaseActivity {
 		case R.id.msg_post_bt_context:
 
 			break;
-
+		case R.id.search_iv_delete:
+			search_pid.setText("");
+			search_et_context.setText("");
+			// 把ListView隐藏
+			search_lv_patient.setVisibility(View.GONE);
+			break;
 		default:
 			break;
 		}
 	}
 
-	protected boolean updateImage() {
-		if (datas.size() == 0) {
-			return false;
-		}
-
+	private void showSearchListView() {
+		search_lv_patient.setVisibility(View.VISIBLE);
+		// 获得输入的内容
 		RequestParams params = new RequestParams();
+		params.addBodyParameter("seachtext", search_et_context.getText().toString().trim());
+		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "searchPatientBytext",
+				params, new RequestCallBack<String>() {
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						List<PatientItem> tmp = null;
+						if (!arg0.result.equals("")) {
+							String list = JSONObject.parseObject(arg0.result).getString("list");
+							tmp = JSONObject.parseArray(list, PatientItem.class);
+						}
+						if (JListKit.isNotEmpty(tmp)) {
+							searchdatas.clear();
+							searchdatas.addAll(tmp);
+						}
+						searadapter.refreshDatas(searchdatas);
+					}
+
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						// TODO Auto-generated method stub
+						ToastMaker.showShortToast("数据返回失败");
+					}
+
+				});
+		// 获取数据库对象
+		// MyListViewCursorAdapter adapter = new
+		// MyListViewCursorAdapter(context, cursor);
+		//
+		// mListView.setAdapter(adapter);
+		//
+		// mListView.setOnItemClickListener(new
+		// AdapterView.OnItemClickListener() {
+		// @Override
+		// public void onItemClick(AdapterView<?> parent, View view, int
+		// position, long id) {
+		// // 把cursor移动到指定行
+		// cursor.moveToPosition(position);
+		// String name = cursor.getString(cursor.getColumnIndex("name"));
+		// ToastUtils.showToast(context, name);
+		// }
+		// });
+
+	}
+
+	protected boolean updateImage() {
+		// if (datas.size() == 0) {
+		// return false;
+		// }
 		// Iterator<HashMap<String, Object>> iterator = imageItem.iterator();
 		// int i = 0;
 		// while (iterator.hasNext()) {
@@ -301,7 +414,11 @@ public class UpdateInfoActivity extends BaseActivity {
 		// params.addBodyParameter("file" + i++, new File(path));
 		// }
 		// }
-
+		if (!pro_id.equals("3") && search_pid.getText().toString().equals("")) {
+			ToastMaker.showShortToast("请搜索选择患者");
+			return false;
+		}
+		RequestParams params = new RequestParams();
 		String netPath = "";
 		int i = 0;
 		String httpmethod = "updateRecord";
@@ -320,9 +437,13 @@ public class UpdateInfoActivity extends BaseActivity {
 		if (JStringKit.isNotEmpty(rid))
 			params.addBodyParameter("rid", rid + "");
 		params.addBodyParameter("title", info_add_et_title.getText().toString());
+		params.addBodyParameter("uid", AppPreferences.instance().getString(PreferenceKey.USER_ID));
+		params.addBodyParameter("pid", search_pid.getText().toString());
+		params.addBodyParameter("pro_id", pro_id);
+		params.addBodyParameter("title", info_add_et_title.getText().toString());
 		params.addBodyParameter("content", info_add_et_context.getText().toString());
 		params.addBodyParameter("netPath", netPath);
-
+		ToastMaker.showShortToast("正在上传");
 		LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + httpmethod, params,
 				new RequestCallBack<String>() {
 

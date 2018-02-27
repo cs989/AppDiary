@@ -9,9 +9,11 @@ import com.hispital.appdiary.adapter.ImageItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.ImageItem;
 import com.hispital.appdiary.entity.InfoItem;
+import com.hispital.appdiary.util.AppPreferences;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.JListKit;
 import com.hispital.appdiary.util.JStringKit;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.view.DialogMaker;
 import com.hispital.appdiary.view.DialogMaker.DialogCallBack;
 import com.hispital.appdiary.view.ToastMaker;
@@ -54,11 +56,10 @@ public class UpdateInfoActivity extends BaseActivity {
 	// 返回按钮
 	@ViewInject(R.id.info_add_iv_back)
 	ImageView info_add_iv_back;
-	
-	//页面标题
+
+	// 页面标题
 	@ViewInject(R.id.info_title)
 	TextView info_title;
-	
 
 	// 保存按钮
 	@ViewInject(R.id.info_add_iv_save)
@@ -98,6 +99,8 @@ public class UpdateInfoActivity extends BaseActivity {
 	private ImageItemAdapter adapter;
 
 	private String rid;
+
+	private String pro_id = AppPreferences.instance().getString(PreferenceKey.PRO_ID);
 
 	// 静态方法启动activity
 	public static void startActivity(Context context) {

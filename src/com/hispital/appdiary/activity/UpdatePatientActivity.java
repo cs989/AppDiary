@@ -102,7 +102,7 @@ public class UpdatePatientActivity extends BaseActivity {
 	private String pathImage;
 	private boolean isUpdate = false;
 	private String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
-	private String pro_id = AppPreferences.instance().getString(PreferenceKey.PRO_ID);
+
 
 	PatientItem datas = new PatientItem();
 

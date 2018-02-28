@@ -3,11 +3,10 @@ package com.hispital.appdiary.activity;
 import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.application.LocalApplication;
-import com.hispital.appdiary.entity.InfoItem;
 import com.hispital.appdiary.entity.UserItem;
 import com.hispital.appdiary.util.AppPreferences;
-import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
+import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -26,6 +25,7 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -67,6 +67,7 @@ public class LoginActivity extends BaseActivity {
 	TextView login_tv_register;
 
 	private float mWidth, mHeight;
+	private ObjectAnimator animator3;
 
 	public static void startActivity(Context context) {
 		Intent intent = new Intent(context, LoginActivity.class);
@@ -122,9 +123,16 @@ public class LoginActivity extends BaseActivity {
 									MainActivity.startActivity(LoginActivity.this);
 									finish();
 								} else {
+									//休眠2s不然显示有问题
+									Handler handler = new Handler();
+									handler.postDelayed(new Runnable() {
+										@Override
+										public void run() {
+											recovery();
+											ToastMaker.showShortToast("用户名或密码错误");
+										}
+									}, 2000);
 
-									ToastMaker.showShortToast("用户名或密码错误");
-									recovery();
 								}
 							}
 
@@ -208,11 +216,10 @@ public class LoginActivity extends BaseActivity {
 	private void progressAnimator(final View view) {
 		PropertyValuesHolder animator = PropertyValuesHolder.ofFloat("scaleX", 0.5f, 1f);
 		PropertyValuesHolder animator2 = PropertyValuesHolder.ofFloat("scaleY", 0.5f, 1f);
-		ObjectAnimator animator3 = ObjectAnimator.ofPropertyValuesHolder(view, animator, animator2);
+		animator3 = ObjectAnimator.ofPropertyValuesHolder(view, animator, animator2);
 		animator3.setDuration(1000);
 		animator3.setInterpolator(new JellyInterpolator());
 		animator3.start();
-
 	}
 
 	private void recovery() {
@@ -220,7 +227,6 @@ public class LoginActivity extends BaseActivity {
 		input_layout.setVisibility(View.VISIBLE);
 		input_layout_name.setVisibility(View.VISIBLE);
 		input_layout_psw.setVisibility(View.VISIBLE);
-
 		ViewGroup.MarginLayoutParams params = (MarginLayoutParams) input_layout.getLayoutParams();
 		params.leftMargin = 0;
 		params.rightMargin = 0;

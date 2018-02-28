@@ -225,8 +225,10 @@ public class ShowInfoActivity extends BaseActivity {
 
 						@Override
 						public void onSuccess(ResponseInfo<String> arg0) {
+							msg_show_et_context.setText("");
 							datasMsg.clear();
 							loadMsgData();
+							ToastMaker.showShortToast("发送成功！");
 						}
 
 						@Override
@@ -236,7 +238,7 @@ public class ShowInfoActivity extends BaseActivity {
 
 					});
 		} else {
-			ToastMaker.showShortToast("消息内容为空");
+			ToastMaker.showShortToast("消息内容不能为空");
 		}
 	}
 

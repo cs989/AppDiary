@@ -14,5 +14,7 @@ public class MessageItem {
 	public String content;
 	// 留言时间
 	public String time;
+	//用户图片
+	public String uurl;
 
 }

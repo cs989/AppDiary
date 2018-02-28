@@ -100,6 +100,7 @@ public class UpdatePatientActivity extends BaseActivity {
 	private final int GET_DATA = 2;
 	private final int TAKE_PHOTO = 3;
 	private String pathImage;
+	private File outputImage;
 	private boolean isUpdate = false;
 	private String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
 
@@ -366,7 +367,7 @@ public class UpdatePatientActivity extends BaseActivity {
 					startActivityForResult(intent, IMAGE_OPEN);
 					break;
 				case 1:
-					File outputImage = new File(Environment.getExternalStorageDirectory(), "test.jpg");
+					outputImage = new File(Environment.getExternalStorageDirectory(), "test.jpg");
 					try {
 						if (outputImage.exists()) {
 							outputImage.delete();
@@ -417,7 +418,7 @@ public class UpdatePatientActivity extends BaseActivity {
 			}
 		} // end if 打开图片
 		if (resultCode == RESULT_OK && requestCode == GET_DATA) {
-			pathImage = imageUri.toString();
+			pathImage = outputImage.getPath();
 		}
 		// ����
 		if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {

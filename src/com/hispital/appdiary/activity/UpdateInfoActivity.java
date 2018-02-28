@@ -103,6 +103,7 @@ public class UpdateInfoActivity extends BaseActivity {
 	private final int TAKE_PHOTO = 3;
 	private String pathImage;
 	private String pathTakePhoto;
+	private File outputImage;
 	// private ArrayList<HashMap<String, Object>> imageItem;
 
 	List<ImageItem> datas = JListKit.newArrayList();
@@ -489,7 +490,7 @@ public class UpdateInfoActivity extends BaseActivity {
 					startActivityForResult(intent, IMAGE_OPEN);
 					break;
 				case 1:
-					File outputImage = new File(Environment.getExternalStorageDirectory(), "test.jpg");
+					outputImage = new File(Environment.getExternalStorageDirectory(), "test.jpg");
 					pathTakePhoto = outputImage.toString();
 					try {
 						if (outputImage.exists()) {
@@ -559,7 +560,7 @@ public class UpdateInfoActivity extends BaseActivity {
 			}
 		} // end if 打开图片
 		if (resultCode == RESULT_OK && requestCode == GET_DATA) {
-			pathImage = imageUri.toString();
+			pathImage = outputImage.getPath();
 		}
 		// ����
 		if (resultCode == RESULT_OK && requestCode == TAKE_PHOTO) {

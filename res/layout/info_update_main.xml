@@ -124,7 +124,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="(友情提示:只能添加8张图片,长按图片可以删除已添加图片)"
+            android:text="(友情提示:只能添加7张图片,长按图片可以删除已添加图片)"
             android:textSize="10sp" />
     </LinearLayout>
 

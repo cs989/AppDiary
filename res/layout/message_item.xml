@@ -13,6 +13,14 @@
         android:textColor="#000000"
         android:textSize="15sp" />
 
+    <ImageView
+        android:id="@+id/info_show_iv_user"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/empty_photo" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -27,7 +35,6 @@
             android:singleLine="false"
             android:textColor="#000000"
             android:textSize="12sp" />
-
 
         <LinearLayout
             android:layout_width="match_parent"

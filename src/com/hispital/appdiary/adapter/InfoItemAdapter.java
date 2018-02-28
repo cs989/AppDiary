@@ -5,6 +5,7 @@ import java.util.List;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.activity.ShowInfoActivity;
 import com.hispital.appdiary.activity.UpdateInfoActivity;
+import com.hispital.appdiary.activity.UpdatePatientActivity;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.cache.AsyncImageLoader;
 import com.hispital.appdiary.entity.InfoItem;
@@ -136,10 +137,19 @@ public class InfoItemAdapter extends SimpleBaseAdapter<InfoItem> {
 				ConstantsUtil.IMAGE_URL + datas.get(position).purl, DisplayUtil.dip2px(c, 105),
 				DisplayUtil.dip2px(c, 70));
 
-		listView.setOnItemClickListener(new OnItemClickListener() {
+		// listView.setOnItemClickListener(new OnItemClickListener() {
+		// @Override
+		// public void onItemClick(AdapterView<?> parent, View v, int position,
+		// long id) {
+		//
+		// }
+		// });
+
+		entityHolder.item_iv_img.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				ShowInfoActivity.startActivity(v.getContext(), datas.get(position).rid + "");
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ShowInfoActivity.startActivity(v.getContext(), datas.get(ption).rid + "");
 			}
 		});
 

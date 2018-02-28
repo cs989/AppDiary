@@ -105,7 +105,7 @@ public class FindFocusedFragment extends BaseFragment {
 		StoreHouseHeader header = new StoreHouseHeader(context);
 		header.setLayoutParams(new PtrFrameLayout.LayoutParams(-1, -2));
 		header.setPadding(0, DisplayUtil.dip2px(context, 15), 0, DisplayUtil.dip2px(context, 10));
-		header.initWithString("Diary Diary");
+		header.initWithString("ICU Diary");
 		header.setTextColor(getResources().getColor(android.R.color.black));
 
 		ptr.setHeaderView(header);

@@ -5,9 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hispital.appdiary.R;
-import com.hispital.appdiary.activity.LoadingActivity;
 import com.hispital.appdiary.activity.LoginActivity;
-import com.hispital.appdiary.activity.MainActivity;
 import com.hispital.appdiary.adapter.UserItemAdapter;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.UserItem;
@@ -108,7 +106,7 @@ public class SelfFragment extends BaseFragment {
 	private List<UserItem> datasImage = JListKit.newArrayList();
 	UserItem datas = new UserItem();
 	private Uri imageUri;
-
+	private File outputImage;
 	// 适配器
 	private UserItemAdapter adapter;
 
@@ -251,7 +249,7 @@ public class SelfFragment extends BaseFragment {
 			ToastMaker.showShortToast("密码输入不一致！");
 			return false;
 		}
-		if (self_et_password.getText().toString().trim().length()<6) {
+		if (self_et_password.getText().toString().trim().length() < 6) {
 			ToastMaker.showShortToast("密码长度为6位以上！");
 			return false;
 		}
@@ -337,7 +335,7 @@ public class SelfFragment extends BaseFragment {
 					startActivityForResult(intent, IMAGE_OPEN);
 					break;
 				case 1:
-					File outputImage = new File(Environment.getExternalStorageDirectory(), "test.jpg");
+					outputImage = new File(Environment.getExternalStorageDirectory(), "test.jpg");
 					try {
 						if (outputImage.exists()) {
 							outputImage.delete();
@@ -388,7 +386,7 @@ public class SelfFragment extends BaseFragment {
 			}
 		} // end if 打开图片
 		if (resultCode == ((Activity) context).RESULT_OK && requestCode == GET_DATA) {
-			pathImage = imageUri.toString();
+			pathImage = outputImage.getPath();
 		}
 		// ����
 		if (resultCode == ((Activity) context).RESULT_OK && requestCode == TAKE_PHOTO) {

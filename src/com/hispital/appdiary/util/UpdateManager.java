@@ -62,11 +62,11 @@ public class UpdateManager {
 		String left = "";
 		boolean cancelable = true;
 		if (type == 1 | isDownload) {
-			title = "安装新版本";
-			left = "立即安装";
+			title = "必须安装新版本才能使用";
+			left = "浏览器下载更新";
 		} else {
-			title = "发现新版本";
-			left = "立即更新";
+			title = "必须安装新版本才能使用";
+			left = "浏览器下载更新";
 		}
 		if (type == 2) {
 			cancelable = false;
@@ -81,12 +81,13 @@ public class UpdateManager {
 						installApk(context, new File(downLoadPath, fileName));
 					} else {
 						if (url != null && !TextUtils.isEmpty(url)) {
-							if (type == 2) {
-								createProgress(context);
-							} else {
-								createNotification(context);
-							}
+							// if (type == 2) {
+							// createProgress(context);
+							// } else {
+							// createNotification(context);
+							// }
 							downloadFile(context);
+							System.exit(0);
 						} else {
 							Toast.makeText(context, "下载地址错误", Toast.LENGTH_SHORT).show();
 						}
@@ -113,52 +114,60 @@ public class UpdateManager {
 	 *
 	 */
 	public void downloadFile(final Context context) {
+
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.VIEW");
+		Uri content_url = Uri.parse(url);
+		intent.setData(content_url);
+		context.startActivity(intent);
 		// RequestParams params = new RequestParams();
 		// params.setSaveFilePath(downLoadPath + fileName);
-		LocalApplication.getInstance().httpUtils.send(HttpMethod.GET, url, new RequestCallBack<String>() {
-
-			@Override
-			public void onFailure(HttpException arg0, String arg1) {
-				// 回送消息、
-				ToastMaker.showShortToast("下载失败");
-				Activity activity = (Activity) context;
-				activity.finish();
-			}
-
-			@Override
-			public void onLoading(long total, long current, boolean isUploading) {
-				if (type == 0) {
-					notifyNotification(current, total);
-				} else if (type == 2) {
-					progressDialog.setProgress((int) (current * 100 / total));
-				}
-				if (total == current) {
-					if (type == 0) {
-						mBuilder.setContentText("下载完成");
-						// mNotifyManager.notify(10086,
-						// mBuilder.build());
-					} else if (type == 2) {
-						progressDialog.setMessage("下载完成");
-					}
-					if (type == 1) {
-						showDialog(context);
-					} else {
-						installApk(context, new File(downLoadPath, fileName));
-					}
-				}
-			}
-
-			@Override
-			public void onSuccess(ResponseInfo<String> arg0) {
-				ToastMaker.showShortToast("下载成功");
-				Activity activity = (Activity) context;
-				activity.finish();
-				installApk(context, new File(downLoadPath, fileName));
-				// 回送消息
-				// ToastMaker.showShortToast("下载成功");
-				// finish();
-			}
-		});
+		// LocalApplication.getInstance().httpUtils.send(HttpMethod.GET, url,
+		// new RequestCallBack<String>() {
+		//
+		// @Override
+		// public void onFailure(HttpException arg0, String arg1) {
+		// // 回送消息、
+		// ToastMaker.showShortToast("下载失败");
+		// Activity activity = (Activity) context;
+		// activity.finish();
+		// }
+		//
+		// @Override
+		// public void onLoading(long total, long current, boolean isUploading)
+		// {
+		// if (type == 0) {
+		// notifyNotification(current, total);
+		// } else if (type == 2) {
+		// progressDialog.setProgress((int) (current * 100 / total));
+		// }
+		// if (total == current) {
+		// if (type == 0) {
+		// mBuilder.setContentText("下载完成");
+		// // mNotifyManager.notify(10086,
+		// // mBuilder.build());
+		// } else if (type == 2) {
+		// progressDialog.setMessage("下载完成");
+		// }
+		// if (type == 1) {
+		// showDialog(context);
+		// } else {
+		// installApk(context, new File(downLoadPath, fileName));
+		// }
+		// }
+		// }
+		//
+		// @Override
+		// public void onSuccess(ResponseInfo<String> arg0) {
+		// ToastMaker.showShortToast("下载成功");
+		// Activity activity = (Activity) context;
+		// activity.finish();
+		// installApk(context, new File(downLoadPath, fileName));
+		// // 回送消息
+		// // ToastMaker.showShortToast("下载成功");
+		// // finish();
+		// }
+		// });
 
 		// x.http().request(HttpMethod.GET, params, new
 		// Callback.ProgressCallback<File>() {

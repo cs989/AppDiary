@@ -10,8 +10,10 @@ import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.ImageItem;
 import com.hispital.appdiary.entity.InfoItem;
 import com.hispital.appdiary.entity.MessageItem;
+import com.hispital.appdiary.util.AppPreferences;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.util.JListKit;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -41,8 +43,8 @@ public class ShowInfoActivity extends BaseActivity {
 	// 返回按钮
 	@ViewInject(R.id.info_show_iv_back)
 	ImageView info_show_iv_back;
-	
-	//页面标题
+
+	// 页面标题
 	@ViewInject(R.id.info_title)
 	TextView info_title;
 
@@ -216,6 +218,7 @@ public class ShowInfoActivity extends BaseActivity {
 		if (text.length() > 0) {
 			RequestParams params = new RequestParams();
 			params.addBodyParameter("rid", rid);
+			params.addBodyParameter("uid", AppPreferences.instance().getString(PreferenceKey.USER_ID));
 			params.addBodyParameter("content", msg_show_et_context.getText() + "");
 			LocalApplication.getInstance().httpUtils.send(HttpMethod.POST, ConstantsUtil.SERVER_URL + "createMsg",
 					params, new RequestCallBack<String>() {

@@ -6,6 +6,7 @@ import com.hispital.appdiary.fragment.SelfFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
+import android.view.WindowManager;
 
 public class RegisterActivity extends BaseActivity {
 
@@ -27,6 +28,7 @@ public class RegisterActivity extends BaseActivity {
 	@Override
 	protected void initParams() {
 		// TODO Auto-generated method stub
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); // 防止下面输入框无法获取焦点
 		ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.register_flyt_content,
 				SelfFragment.instantiate(RegisterActivity.this, SelfFragment.class.getName(), null),

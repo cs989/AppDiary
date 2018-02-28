@@ -414,8 +414,14 @@ public class UpdateInfoActivity extends BaseActivity {
 		// params.addBodyParameter("file" + i++, new File(path));
 		// }
 		// }
-		if (!pro_id.equals("3") && search_pid.getText().toString().equals("")) {
-			ToastMaker.showShortToast("请搜索选择患者");
+		if (JStringKit.isEmpty(rid)) {
+			if (!pro_id.equals("3") && search_pid.getText().toString().equals("")) {
+				ToastMaker.showShortToast("请搜索选择患者");
+				return false;
+			}
+		}
+		if (info_add_et_title.getText().toString().trim().equals("")) {
+			ToastMaker.showShortToast("必须输入标题");
 			return false;
 		}
 		RequestParams params = new RequestParams();

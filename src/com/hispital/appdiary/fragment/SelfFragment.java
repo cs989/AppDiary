@@ -247,6 +247,20 @@ public class SelfFragment extends BaseFragment {
 	}
 
 	protected boolean updateUser() {
+		if (!self_et_password.getText().toString().equals(self_et_confirmpsd.getText().toString())) {
+			ToastMaker.showShortToast("密码输入不一致！");
+			return false;
+		}
+		if (self_et_password.getText().toString().trim().length()<6) {
+			ToastMaker.showShortToast("密码长度为6位以上！");
+			return false;
+		}
+		if (self_et_name.getText().toString().trim().equals("") || self_et_lname.getText().toString().trim().equals("")
+				|| self_et_password.getText().toString().trim().equals("")) {
+			ToastMaker.showShortToast("*内容不能为空");
+			return false;
+		}
+
 		String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
 		RequestParams params = new RequestParams();
 		boolean isImage = false;
@@ -298,7 +312,11 @@ public class SelfFragment extends BaseFragment {
 					@Override
 					public void onSuccess(ResponseInfo<String> arg0) {
 						// 回送消息
-						ToastMaker.showShortToast("保存成功");
+						if (arg0.result.equals("success")) {
+							ToastMaker.showShortToast("保存成功");
+						} else {
+							ToastMaker.showShortToast(arg0.result);
+						}
 					}
 				});
 

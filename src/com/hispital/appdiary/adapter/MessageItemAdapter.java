@@ -5,6 +5,8 @@ import java.util.List;
 import com.hispital.appdiary.R;
 import com.hispital.appdiary.application.LocalApplication;
 import com.hispital.appdiary.entity.MessageItem;
+import com.hispital.appdiary.util.AppPreferences;
+import com.hispital.appdiary.util.AppPreferences.PreferenceKey;
 import com.hispital.appdiary.util.ConstantsUtil;
 import com.hispital.appdiary.view.ToastMaker;
 import com.lidroid.xutils.ViewUtils;
@@ -55,7 +57,7 @@ public class MessageItemAdapter extends SimpleBaseAdapter<MessageItem> {
 		final int tempposition = position;
 		// entityHolder.item_msg_tv_delete.setVisibility(View.GONE);
 
-		if (datas.get(position).uid == 1) {
+		if ((datas.get(position).uid + "").equals(AppPreferences.instance().getString(PreferenceKey.USER_ID))) {
 			entityHolder.item_msg_tv_delete.setVisibility(View.VISIBLE);
 			entityHolder.item_msg_tv_delete.setOnClickListener(new View.OnClickListener() {
 				@Override

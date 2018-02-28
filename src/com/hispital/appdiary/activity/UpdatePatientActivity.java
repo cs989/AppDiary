@@ -103,7 +103,6 @@ public class UpdatePatientActivity extends BaseActivity {
 	private boolean isUpdate = false;
 	private String uid = AppPreferences.instance().getString(PreferenceKey.USER_ID);
 
-
 	PatientItem datas = new PatientItem();
 
 	private Uri imageUri;
@@ -288,6 +287,11 @@ public class UpdatePatientActivity extends BaseActivity {
 	}
 
 	protected boolean updatePatient() {
+
+		if (patient_et_no.getText().toString().trim().equals("")
+				|| patient_et_name.getText().toString().trim().equals("")) {
+			ToastMaker.showShortToast("编号或姓名不能为空");
+		}
 		RequestParams params = new RequestParams();
 		boolean isImage = false;
 		String netPath = "";
@@ -313,6 +317,7 @@ public class UpdatePatientActivity extends BaseActivity {
 			else
 				httpmethod = "creategPatient";
 		}
+		params.addBodyParameter("uid", uid + "");
 		params.addBodyParameter("pno", patient_et_no.getText().toString());
 		params.addBodyParameter("name", patient_et_name.getText().toString());
 		params.addBodyParameter("sex", datas.sex);

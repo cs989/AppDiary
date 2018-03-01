@@ -123,7 +123,7 @@ public class LoginActivity extends BaseActivity {
 									MainActivity.startActivity(LoginActivity.this);
 									finish();
 								} else {
-									//休眠2s不然显示有问题
+									// 休眠2s不然显示有问题
 									Handler handler = new Handler();
 									handler.postDelayed(new Runnable() {
 										@Override
@@ -139,6 +139,7 @@ public class LoginActivity extends BaseActivity {
 							@Override
 							public void onFailure(HttpException error, String msg) {
 								// TODO Auto-generated method stub
+								recovery();
 								ToastMaker.showShortToast("数据返回失败");
 							}
 						});
